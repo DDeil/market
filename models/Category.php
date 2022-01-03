@@ -11,11 +11,15 @@ use yii\db\ActiveRecord;
  *
  * @property integer    $id
  * @property string     $name
+ * @property boolean    $status
  *
  */
 
 class Category extends ActiveRecord
 {
+
+    public const STATUS_ACTIVE     = 1;
+    public const STATUS_NOT_ACTIVE = 0;
 
     /**
      * @return string
@@ -32,6 +36,7 @@ class Category extends ActiveRecord
     {
         return [
             ['name', 'string', 'length' => [0, 256]],
+            ['status', 'boolean'],
         ];
     }
 }

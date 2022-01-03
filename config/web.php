@@ -47,7 +47,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<token>' => 'site/go',
+//                '<token>' => 'site/go',
             ],
         ],
     ],

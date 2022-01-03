@@ -2,11 +2,7 @@
 
 namespace app\controllers;
 
-use app\form\LinksForm;
 use app\models\Category;
-use app\search\LinksSearch;
-use app\service\SaveLinkService;
-use Yii;
 use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -33,7 +29,11 @@ class SiteController extends Controller
      */
     public function actionIndex(): string
     {
-        return $this->render('index');
+        $categories = Category::findAll(['status' => true]);
+
+        return $this->render('index', [
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -42,6 +42,7 @@ class SiteController extends Controller
      */
     public function actionGo($token)
     {
+        die('sad');
         return $this->render('index');
     }
 }
