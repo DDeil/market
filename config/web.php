@@ -19,9 +19,10 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'user' => [
-            'identityClass' => 'app\models\User',
+        'user'         => [
+            'identityClass'   => \app\models\User::class,
             'enableAutoLogin' => true,
+            'loginUrl'        => ['/user/login', 'redirect' => "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -50,6 +51,9 @@ $config = [
 //                '<token>' => 'site/go',
             ],
         ],
+    ],
+    'modules' => [
+        'adm' => ['class' => app\modules\adm\AdmModule::class],
     ],
     'params' => $params,
 ];

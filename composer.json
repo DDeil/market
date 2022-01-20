@@ -17,6 +17,9 @@
         "php": ">=7.2",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
+        "yiisoft/yii2-bootstrap4": "~2.0.0",
+        "kartik-v/yii2-widget-select2": "@dev",
+        "dmstr/yii2-adminlte-asset": "^2.1",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0"
     },
     "require-dev": {
@@ -29,7 +32,6 @@
         "symfony/browser-kit": ">=2.7 <=4.2.4",
         "codeception/module-filesystem": "^1.0.0",
         "codeception/module-yii2": "^1.0.0",
-        "kartik-v/yii2-widget-select2": "@dev",
         "codeception/module-asserts": "^1.0.0"
     },
     "config": {

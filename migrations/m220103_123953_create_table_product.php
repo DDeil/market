@@ -18,11 +18,13 @@ class m220103_123953_create_table_product extends Migration
             'title'       => $this->string()->notNull(),
             'description' => $this->string()->notNull(),
             'price'       => $this->double(),
-            'category_id' => $this->integer()->notNull(),
             'image'       => $this->string(),
+            'is_hit'      => $this->boolean(),
+            'is_new'      => $this->boolean(),
+            'type'        => $this->integer()->notNull(),
+            'status'      => $this->integer()->notNull(),
         ]);
 
-        $this->addForeignKey('product-category_id-category-id', 'product', 'category_id', 'category', 'id');
     }
 
     /**

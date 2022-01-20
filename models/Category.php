@@ -21,6 +21,14 @@ class Category extends ActiveRecord
     public const STATUS_ACTIVE     = 1;
     public const STATUS_NOT_ACTIVE = 0;
 
+    public const TITLE_STATUS_ACTIVE     = 'Активный';
+    public const TITLE_STATUS_NOT_ACTIVE = 'Не активнй';
+
+    public const STATUS_LIST = [
+        self::STATUS_ACTIVE     => self::TITLE_STATUS_ACTIVE,
+        self::STATUS_NOT_ACTIVE => self::TITLE_STATUS_NOT_ACTIVE,
+    ];
+
     /**
      * @return string
      */
@@ -38,5 +46,13 @@ class Category extends ActiveRecord
             ['name', 'string', 'length' => [0, 256]],
             ['status', 'boolean'],
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTextStatus(): string
+    {
+        return self::STATUS_LIST[$this->status] ?? 'Статус не известен';
     }
 }
