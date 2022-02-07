@@ -28,7 +28,8 @@ use yii\helpers\Url;
                 'items' => [
                     [
                         'label' => 'Товары',
-                        'icon' => 'line-chart',
+//                        'icon' => 'line-chart',
+                        'icon' => 'money',
                         'url' => ['/adm/product/list'],
                         'visible' => true,
                     ],
@@ -36,6 +37,12 @@ use yii\helpers\Url;
                         'label' => 'Категории',
                         'icon' => 'group',
                         'url' => ['/adm/category/list'],
+                        'visible' => true,
+                    ],
+                    [
+                        'label' => 'Новости',
+                        'icon' => 'newspaper-o',
+                        'url' => ['/adm/news/list'],
                         'visible' => true,
                     ],
                     [

@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use DateTime;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -10,12 +11,12 @@ use yii\db\ActiveRecord;
  * @property string             $title
  * @property string             $description
  * @property float              $price
- * @property integer            $category_id
  * @property string             $image
  * @property boolean            $is_hit
  * @property boolean            $is_new
  * @property integer            $type
  * @property integer            $status
+ * @property DateTime           $create_at
  *
  * @property Category           $category
  * @property ProductCategory    $productCategory
@@ -52,6 +53,15 @@ class Product extends ActiveRecord
     public static function tableName(): string
     {
         return 'product';
+    }
+
+    public function rules()
+    {
+        return [
+            [['title', 'description'], 'string'],
+            [['type', 'status'], 'integer'],
+            [['is_hit', 'is_new'], 'boolean'],
+        ];
     }
 
     /**

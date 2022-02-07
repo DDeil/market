@@ -49,7 +49,7 @@ class AddProductForm extends Model
      */
     public function process(): bool
     {
-        $documentFileName = $this->image ? (new \DateTime())->format('Ymd_His_u') . '.' . $this->image->extension : null;
+        $imageFileName = $this->image ? (new \DateTime())->format('Ymd_His_u') . '.' . $this->image->extension : null;
 
         $product = new Product();
         $product->title       = $this->title;
@@ -59,7 +59,7 @@ class AddProductForm extends Model
         $product->type        = $this->type;
         $product->is_hit      = $this->is_hit;
         $product->is_new      = $this->is_new;
-        $product->image       = $documentFileName;
+        $product->image       = $imageFileName;
 
         $isSave = $product->save();
 
@@ -71,8 +71,8 @@ class AddProductForm extends Model
             $this->createProductCategory($categoryId, $product->id);
         }
 
-        if ($documentFileName) {
-            $path = '@app/web/image/product/' . $documentFileName;
+        if ($imageFileName) {
+            $path = '@app/web/image/product/' . $imageFileName;
             $path = \Yii::getAlias($path);
 
             $this->image->saveAs($path);

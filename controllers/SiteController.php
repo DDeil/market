@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Category;
+use app\models\News;
 use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,9 +31,11 @@ class SiteController extends Controller
     public function actionIndex(): string
     {
         $categories = Category::findAll(['status' => true]);
+        $news       = News::findAll(['status' => News::STATUS_ACTIVE]);
 
         return $this->render('index', [
             'categories' => $categories,
+            'news'       => $news,
         ]);
     }
 
