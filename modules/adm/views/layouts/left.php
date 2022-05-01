@@ -27,6 +27,12 @@ use yii\helpers\Url;
                 ],
                 'items' => [
                     [
+                        'label' => 'Пользователи',
+                        'icon' => 'user',
+                        'url' => ['/adm/user/list'],
+                        'visible' => true,
+                    ],
+                    [
                         'label' => 'Товары',
 //                        'icon' => 'line-chart',
                         'icon' => 'money',
@@ -43,6 +49,12 @@ use yii\helpers\Url;
                         'label' => 'Новости',
                         'icon' => 'newspaper-o',
                         'url' => ['/adm/news/list'],
+                        'visible' => true,
+                    ],
+                    [
+                        'label' => 'Заказы',
+                        'icon' => 'line-chart',
+                        'url' => ['/adm/order/list'],
                         'visible' => true,
                     ],
                     [

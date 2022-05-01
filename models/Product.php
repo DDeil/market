@@ -17,9 +17,11 @@ use yii\db\ActiveRecord;
  * @property integer            $type
  * @property integer            $status
  * @property DateTime           $create_at
+ * @property                    $categorys
  *
  * @property Category           $category
  * @property ProductCategory    $productCategory
+ * @property ProductOrder       $countProduct
  */
 
 class Product extends ActiveRecord
@@ -58,9 +60,27 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description'], 'string'],
-            [['type', 'status'], 'integer'],
+            [['title', 'description','$categorys'], 'string'],
+            [['price','type', 'status'], 'integer'],
             [['is_hit', 'is_new'], 'boolean'],
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function attributeLabels(): array
+    {
+        return [
+            'title'       => 'Название',
+            'description' => 'Описание',
+            'categoryIds' => 'Категории',
+            'status'      => 'Статус',
+            'type'        => 'Тип',
+            'price'       => 'Цена',
+            'is_hit'      => 'Хит',
+            'is_new'      => 'Новый',
+            'image'       => 'Изображение',
         ];
     }
 
@@ -69,14 +89,25 @@ class Product extends ActiveRecord
      */
     public function getProductCategory(): ActiveQuery
     {
-        return $this->hasOne(ProductCategory::class, ['product_id' => 'id']);
+        return $this->hasMany(ProductCategory::class, ['product_id' => 'id']);
     }
+
 
     /**
      * @return ActiveQuery
      */
     public function getCategory(): ActiveQuery
     {
-        return $this->hasOne(Category::class, ['id' => 'category_id'])->via('productCategory');
+        return $this->hasMany(Category::class, ['id' => 'category_id'])->via('productCategory');
     }
+
+    public function getTextStatus(): string
+    {
+        return self::STATUS_LIST[$this->status] ?? 'Статус не известен';
+    }
+
+
+
+
+
 }

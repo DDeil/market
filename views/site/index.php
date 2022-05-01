@@ -8,6 +8,7 @@
 use app\models\Category;
 use app\models\News;
 
+
 $this->title = 'Главная';
 ?>
 
@@ -28,26 +29,29 @@ $this->title = 'Главная';
             <div id="dws-slider" class="carousel slide" data-ride="carousel">
                 <!--Показатели-->
                 <ol class="carousel-indicators">
-                    <li data-target="#dws-slider" data-slide-to="0" class="active"></li>
-                    <li data-target="#dws-slider" data-slide-to="1"></li>
+                    <?php $isActive = true; ?>
+                    <?php foreach ($news as $newstId) {?>
+                        <li data-target="#dws-slider" data-slide-to="<?=$newstId->id; ?>" <?= $isActive?'class="active':null ?>"></li>
+                        <?php $isActive = false; ?>
+                    <?php } ?>
                 </ol>
 
                 <!--Обертка для слайдов-->
+
                 <div class="carousel-inner" role="listbox">
-                    <div class="item active"><img src="https://dwstroy.ru/lessons/les3649/demo/img/slider-1.jpg" alt="Картинка 1">
-                        <div class="carousel-caption">
-                            <h3 class="text-uppercase">Адаптивный слайдер</h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin aliquet elit lorem, ac congue mi
-                                eleifend sit amet. Sed dignissim viverra neque a tristique.</p>
+
+                    <?php $isActive = true; ?>
+                    <?php foreach ($news as $oneNews) {?>
+                            <?php /** @var $oneNews News */?>
+                        <div class="item <?= $isActive?'active':null ?>"><img src="/image/news/<?=$oneNews->image;?>" alt="Картинка 1">
+                            <div class="carousel-caption">
+                                <h3 class="text-uppercase"><?=$oneNews->title;?></h3>
+                                <p><?=$oneNews->description;?></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="item"><img src="https://dwstroy.ru/lessons/les3649/demo/img/slider-2.jpg" alt="Картинка 2">
-                        <div class="carousel-caption">
-                            <h3 class="text-uppercase">Анимированная прокрутка</h3>
-                            <p>Aenean cursus imperdiet erat sit amet facilisis. Phasellus congue, sem in consectetur accumsan,
-                                tellus risus sollicitudin mauris, quis ornare libero magna eget ex.</p>
-                        </div>
-                    </div>
+                        <?php $isActive = false; ?>
+                    <?php } ?>
+
                 </div>
 
                 <!--Элементы управления-->
@@ -60,6 +64,10 @@ $this->title = 'Главная';
                     <span class="sr-only">Next</span>
                 </a>
             </div>
+
+
+
+
         </wrapper>
         <script>
             $('.carousel').carousel({

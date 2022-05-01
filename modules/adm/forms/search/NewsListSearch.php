@@ -8,9 +8,19 @@ use yii\data\ActiveDataProvider;
 class NewsListSearch extends News
 {
 
-    public function search()
+
+
+    public function search($params)
     {
-        $query = self::find();
+
+
+        $query = self::find()->alias('n');
+
+        $this->load($params);
+
+        $query->andFilterWhere(['n.id' => $this->id]);
+        $query->andFilterWhere(['LIKE','n.title', $this->title]);
+
 
         return new ActiveDataProvider([
             'query' => $query,

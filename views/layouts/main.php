@@ -3,11 +3,13 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use app\modules\adm\forms\search\ProductSearch;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use app\assets\AppAsset;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -35,8 +37,21 @@ AppAsset::register($this);
             <div class="row">
                 <div class="col-sm-12">
                     <div class="pull-right">
-                        <a href="user/login" class="btn btn-sm btn-default">Войти</a> |
-                        <a href="user/registration" class="btn btn-sm btn-default">Регистрация</a>
+                        <?php if (Yii::$app->user->isGuest){?>
+                            <a href="<?=Url::to(['user/login'])?>" class="btn btn-sm btn-default">Войти</a> |
+                            <a href="<?=Url::to(['user/registration'])?>" class="btn btn-sm btn-default">Регистрация</a>
+                        <?php }else{ ?>
+                            <?= Html::a(
+                                'Профиль',
+                                Url::to(['/user/user', 'id' => Yii::$app->getUser()->id]),
+                                [ 'class' => 'btn btn-default btn-flat']
+                            ) ?>
+                            <?= Html::a(
+                                'Выйти',
+                                Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
+                                [ 'class' => 'btn btn-default btn-flat']
+                            ) ?>
+                         <?php }?>
                     </div>
                 </div>
             </div>

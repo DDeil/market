@@ -33,6 +33,7 @@ $this->title = 'Добавть товар';
                                 'placeholder' => 'Категория',
                                 'multiple'    => true,
                             ],
+
                         ])?>
                 <?= $form->field($addForm, 'price')?>
                 <?= $form->field($addForm, 'is_hit')->checkbox()?>

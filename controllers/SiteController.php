@@ -43,6 +43,7 @@ class SiteController extends Controller
      * @param $token
      * @throws NotFoundHttpException
      */
+
     public function actionGo($token)
     {
         die('sad');

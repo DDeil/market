@@ -29,12 +29,50 @@ $this->title = 'Список категорий';
                     'filterModel'  => $searchModel,
                     'columns'      => [
                         'id',
-                        'name',
+                        [
+                            'attribute' => 'name',
+                            'filter' => \kartik\select2\Select2::widget([
+                                'data' => \app\models\Category::find()->select(['name'])->indexBy('name')->column()  ,
+                                'model' =>$searchModel,
+                                'attribute' => 'name',
+                                'pluginOptions' => [
+                                    'allowClear' => true,
+                                    'placeholder' => 'Выберите подук',
+                                    'multiple' => true,
+                                ],
+                            ]),
+                        ],
                         [
                             'header' => 'Статус',
+                            'filter' => \kartik\select2\Select2::widget([
+                                'data' => \app\models\Category::STATUS_LIST ,
+                                'model' => $searchModel,
+                                'attribute' =>'status',
+                                'pluginOptions' => [
+                                    'allowClear' => true,
+                                    'placeholder' => 'Выберите подук',
+                                    'multiple' => true,
+                                ],
+                            ]),
                             'value'  => function (CategoryListSearch $model) {
                                 return $model->getTextStatus();
-                            }
+                            },
+                            'contentOptions' => function ($searchModel) {
+                                if ($searchModel['status'] == 1 ) {
+                                    $class = 'success';
+                                } else {$class = 'danger';
+                                }
+                                return ['class' => $class];
+                            },
+                        ],
+                        [
+                            'header' => '<i class="fa fa-gear"/>',
+                            'format' => 'raw',
+                            'value'  => function (CategoryListSearch $model) {
+
+                                return Html::a('<i class="fa fa-trash"></i>', Url::to(['delete','id'=>$model->id]))
+                                    .' | '. Html::a('<i class="fa fa-pencil"></i>', Url::to(['edit','id'=>$model->id]));
+                            },
                         ],
                     ],
                 ])?>

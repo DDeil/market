@@ -80,8 +80,8 @@ $tiketCount = 3;
                             <div class="pull-right">
                                 <?= Html::a(
                                     'Выйти',
-                                    ['/user/logout'],
-                                    ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
+                                    Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
+                                    [ 'class' => 'btn btn-default btn-flat']
                                 ) ?>
                             </div>
                         </li>

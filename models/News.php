@@ -28,6 +28,8 @@ class News extends ActiveRecord
         self::STATUS_NOT_ACTIVE => self::TITLE_STATUS_NOT_ACTIVE,
     ];
 
+
+
     /**
      * @return string
      */
@@ -36,6 +38,15 @@ class News extends ActiveRecord
         return 'news';
     }
 
+    public function rules()
+    {
+        return [
+            [['id'],'integer'],
+            [['title'],'string'],
+        ];
+    }
+
+
     /**
      * @return string
      */
@@ -43,4 +54,5 @@ class News extends ActiveRecord
     {
         return self::STATUS_LIST[$this->status] ?? 'Статус не известен';
     }
+
 }

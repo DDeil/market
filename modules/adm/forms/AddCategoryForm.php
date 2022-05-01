@@ -8,15 +8,15 @@ use yii\base\Model;
 class AddCategoryForm extends Model
 {
 
+    public $id;
     public $title;
     public $status;
 
     public function rules()
     {
         return [
-            [['title', 'status'], 'required'],
             ['title', 'string'],
-            ['status', 'integer'],
+            [['id','status', ],'integer'],
         ];
     }
 
@@ -33,7 +33,9 @@ class AddCategoryForm extends Model
      */
     public function process(): bool
     {
+
         $model = new Category();
+
 
         $model->name = $this->title;
         $model->status = $this->status;

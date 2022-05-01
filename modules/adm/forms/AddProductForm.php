@@ -66,11 +66,11 @@ class AddProductForm extends Model
         if (!$isSave) {
             return false;
         }
-
-        foreach ($this->categoryIds as $categoryId) {
-            $this->createProductCategory($categoryId, $product->id);
+        if (is_array($this->categoryIds)) {
+            foreach ($this->categoryIds as $categoryId) {
+                $this->createProductCategory($categoryId, $product->id);
+            }
         }
-
         if ($imageFileName) {
             $path = '@app/web/image/product/' . $imageFileName;
             $path = \Yii::getAlias($path);

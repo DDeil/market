@@ -43,7 +43,9 @@ class Category extends ActiveRecord
     public function rules(): array
     {
         return [
+
             ['name', 'string', 'length' => [0, 256]],
+            ['id', 'integer'],
             ['status', 'boolean'],
         ];
     }
