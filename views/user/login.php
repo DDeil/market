@@ -15,14 +15,14 @@ $this->title = 'Вход';
         'options' => ['class' => 'form-horizontal'],
     ]) ?>
     <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-3">
+        <div class="col-lg-offset-4 col-lg-3">
         <?= $form->field($loginForm, 'email')->hint('Введите Email') ?>
         <?= $form->field($loginForm, 'password')->passwordInput()->hint('Введите пароль') ?>
         </div>
     </div>
 
     <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
+        <div class="col-lg-offset-5 col-lg-11">
             <?= Html::submitButton('Вход', ['class' => 'btn btn-success']) ?>
             <?= Html::a('Регистрация',Url::to(['registration']), ['class' => 'btn btn-success']) ?>
         </div>

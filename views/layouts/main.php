@@ -4,6 +4,7 @@
 /* @var $content string */
 
 use app\modules\adm\forms\search\ProductSearch;
+use yii\bootstrap\Modal;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -37,9 +38,11 @@ AppAsset::register($this);
             <div class="row">
                 <div class="col-sm-12">
                     <div class="pull-right">
+
                         <?php if (Yii::$app->user->isGuest){?>
                             <a href="<?=Url::to(['user/login'])?>" class="btn btn-sm btn-default">Войти</a> |
                             <a href="<?=Url::to(['user/registration'])?>" class="btn btn-sm btn-default">Регистрация</a>
+                            <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-sm btn-default">Корзина</a>
                         <?php }else{ ?>
                             <?= Html::a(
                                 'Профиль',
@@ -51,6 +54,10 @@ AppAsset::register($this);
                                 Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
                                 [ 'class' => 'btn btn-default btn-flat']
                             ) ?>
+
+                            <?= Html::a(
+                                'Корзина',
+                                Url::to(['cart/order']), [ 'class' => 'btn btn-default btn-flat']) ?>
                          <?php }?>
                     </div>
                 </div>
@@ -67,6 +74,19 @@ AppAsset::register($this);
             <p class="pull-right"><?= Yii::powered() ?></p>
         </div>
     </footer>
+    <?php Modal::begin([
+            'header' => '<h2>Корзина</h2>',
+            'id' => 'cart',
+            'footer' =>' 
+                <button type="button" class="btn btn-default" data-dismiss="modal">Продолжить</button>
+                <a href="'. Url::to(['cart/order']).' " type="button" class="btn btn-primary">Оформить заказ</a>
+                <button type="button" class="btn btn-danger" onclick="clearCart()">Очистить клрзину</button>
+                ',
+
+        'size' => 'model-lg',
+    ]);
+   Modal::end();
+    ?>
 
     <?php $this->endBody() ?>
     </body>

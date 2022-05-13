@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Category;
+use app\models\Product;
 use app\models\search\ProductSearch;
 use yii\web\Controller;
 
@@ -21,4 +22,16 @@ class ProductController extends Controller
             'searchForm' => $searchForm,
         ]);
     }
+
+    public function actionDetail($id)
+    {
+        $product = Product::findOne($id);
+        if (!$product){
+            return false;
+        }
+        return $this->render('detail',[
+            'product' => $product,
+        ]);
+    }
+
 }

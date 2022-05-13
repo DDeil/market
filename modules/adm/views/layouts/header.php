@@ -15,6 +15,7 @@ $tiketCount = 3;
 
 <header class="main-header">
 
+
     <?= Html::a('<span class="logo-mini">JK</span><span class="logo-lg">Just-K</span>', Yii::$app->homeUrl, ['class' => 'logo']) ?>
 
     <nav class="navbar navbar-static-top" role="navigation">
