@@ -19,8 +19,6 @@ use yii\web\Controller;
 
 class UserController extends Controller
 {
-
-
     public function actionIndex(): string
     {
         $categories = Category::findAll(['status' => true]);
@@ -32,8 +30,6 @@ class UserController extends Controller
         ]);
     }
 
-
-
     public function actionLogin()
     {
         $url = \Yii::$app->getRequest()->getReferrer();
@@ -41,7 +37,6 @@ class UserController extends Controller
         if (!\Yii::$app->getRequest()->isPost){
             \Yii::$app->getSession()->set('lr',$url);
         }
-
 
         $loginForm = new LoginForm();
         if ($loginForm->load(\Yii::$app->getRequest()->post()) && $loginForm->validate()) {
@@ -56,10 +51,7 @@ class UserController extends Controller
         return $this->render('login', [
             'loginForm' => $loginForm,
         ]);
-
-
     }
-
 
     public function actionUser($id)
     {
@@ -91,7 +83,6 @@ class UserController extends Controller
         }
         $editForm = new EditForm($user);
 
-
         if ($editForm->load(\Yii::$app->getRequest()->post()) && $editForm->validate()) {
             if ($editForm->process()) {
                 return $this->redirect(Url::to(['user', 'id' => $id]));
@@ -99,14 +90,10 @@ class UserController extends Controller
             \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
         }
 
-
-
         return $this->render('edit', [
             'editForm' => $editForm,
             'model' => $user,
         ]);
-
-
     }
 
     public function actionLogout($id)
@@ -130,7 +117,5 @@ class UserController extends Controller
             return $this->render('registration', [
                 'registrationForm' => $registrationForm,
             ]);
-
-
     }
 }

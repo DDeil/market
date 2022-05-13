@@ -10,37 +10,30 @@ use yii\base\Model;
 class OrderForm extends Model
 {
 
-
-
     public $name;
     public $phone;
     public $address;
     public $status = Order::STATUS_NEW;
-
 
     public function rules(): array
     {
         return [
             [['name','address'], 'safe'],
             [['phone'], 'integer'],
-
         ];
     }
 
     public function attributeLabels(): array
     {
         return [
-
             'name' => 'Имя',
             'phone' => 'Телефон',
             'address' => 'Адрес',
-
         ];
     }
 
     public function process($session)
     {
-
             $order = new Order();
 
             $order->name = $this->name;
@@ -49,13 +42,11 @@ class OrderForm extends Model
             $order->status = $this->status;
             $order->date = date("Y-m-d  H:i:s");
 
-
         if ($order->save()) {
         $this->saveOrderItems($session['cart'], $order->id);
         $session->remove('cart');
         $session->remove('cart.sum');
         $session->remove('cart.qty');
-
         }
     }
 
