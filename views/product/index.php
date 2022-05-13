@@ -14,6 +14,7 @@ use app\models\search\ProductSearch;
 use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = 'Главная';
 ?>
@@ -71,9 +72,9 @@ $this->title = 'Главная';
                 <div class="col-sm-4 col-lg-4">
                     <div style="text-align:center; margin-bottom: 10px; padding-bottom: 10px; width: 100%; height: 250px" class="btn-default" >
                         <p><?= $product->title ?></p>
-                            <a href="productdetail.html"><img src="image/product/<?=$product->image?>" height="50%"/></a>
+                            <a href="<?=Url::to(['detail', 'id'=>$product->id])?>"><img src="image/product/<?=$product->image?>" height="50%"/></a>
                             <p class="bg-light-blue">$ <?= $product->price ?></p>
-                            <a href="shoppingcart.html" class="btn btn-sm btn-warning"><img src="image/cart.png" width="20%"/> В корзину</a>
+                            <a href="<?=Url::to(['cart/add', 'id'=>$product->id])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart"><img src="image/cart.png" width="20%"/> В корзину</a>
                     </div>
                 </div>
             <?php } ?>

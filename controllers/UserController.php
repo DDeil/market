@@ -29,13 +29,21 @@ class UserController extends Controller
             'news'       => $news,
         ]);
     }
+
     public function actionLogin()
     {
+        $url = \Yii::$app->getRequest()->getReferrer();
+
+        if (!\Yii::$app->getRequest()->isPost){
+            \Yii::$app->getSession()->set('lr',$url);
+        }
+
         $loginForm = new LoginForm();
         if ($loginForm->load(\Yii::$app->getRequest()->post()) && $loginForm->validate()) {
 
             if ($loginForm->process()) {
-                return $this->redirect(Url::to(['index']));
+
+                return $this->redirect(\Yii::$app->getSession()->get('lr'));
             }
             \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
 
@@ -44,6 +52,7 @@ class UserController extends Controller
             'loginForm' => $loginForm,
         ]);
     }
+
     public function actionUser($id)
     {
         $modelUser = User::findOne($id);
@@ -74,7 +83,6 @@ class UserController extends Controller
         }
         $editForm = new EditForm($user);
 
-
         if ($editForm->load(\Yii::$app->getRequest()->post()) && $editForm->validate()) {
             if ($editForm->process()) {
                 return $this->redirect(Url::to(['user', 'id' => $id]));
@@ -82,14 +90,10 @@ class UserController extends Controller
             \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
         }
 
-
-
         return $this->render('edit', [
             'editForm' => $editForm,
             'model' => $user,
         ]);
-
-
     }
 
     public function actionLogout($id)
@@ -101,18 +105,17 @@ class UserController extends Controller
     }
     public function actionRegistration()
     {
+
         $registrationForm = new RegistrationForm();
 
         if ($registrationForm->load(\Yii::$app->getRequest()->post()) && $registrationForm->validate()) {
             if ($registrationForm->process()) {
 
-                return $this->redirect(Url::to(['login']));
+                return $this->redirect(\Yii::$app->getRequest()->getReferrer());
             }
         }
             return $this->render('registration', [
                 'registrationForm' => $registrationForm,
             ]);
-
-
     }
 }

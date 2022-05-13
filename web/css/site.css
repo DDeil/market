@@ -3,6 +3,7 @@ body {
     height: 100%;
 }
 
+
 .wrap {
     min-height: 100%;
     height: auto;
@@ -136,6 +137,7 @@ a.desc:after {
         transform: translateX(0);
     }
 }
+
 @keyframes anime-P {
     from {
         opacity: 0;
@@ -145,4 +147,8 @@ a.desc:after {
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+.del-item{
+    cursor: pointer;
 }

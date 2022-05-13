@@ -1,0 +1,968 @@
+diff --git a/assets/AppAsset.php b/assets/AppAsset.php
+index 47932b1..d9440e1 100755
+--- a/assets/AppAsset.php
++++ b/assets/AppAsset.php
+@@ -23,6 +23,7 @@ class AppAsset extends AssetBundle
+         'css/site.css',
+     ];
+     public $js = [
++        'js/main.js',
+     ];
+     public $depends = [
+         'yii\web\YiiAsset',
+diff --git a/controllers/CartController.php b/controllers/CartController.php
+new file mode 100644
+index 0000000..0765d89
+--- /dev/null
++++ b/controllers/CartController.php
+@@ -0,0 +1,113 @@
++<?php
++
++namespace app\controllers;
++
++use app\form\OrderForm;
++use app\form\UserOrderForm;
++use app\models\User;
++use yii\helpers\Url;
++use yii\web\Controller;
++use app\models\Product;
++use app\models\Cart;
++use Yii;
++
++class CartController extends Controller
++{
++    public function actionAdd()
++    {
++        $id = Yii::$app->request->get('id');
++        $qty = Yii::$app->request->get('qty');
++        if (!$qty){
++          $qty = 1;
++        }
++        $product = Product::findOne($id);
++        if (empty($product)){
++            return false;
++        }
++        $session = Yii::$app->session;
++        $session->open();
++        $cart = new Cart();
++        $cart->addToCart($product, $qty);
++        $this->layout = false;
++        return $this->render('cart-modal', [
++            'session' => $session,
++        ]);
++    }
++
++    public function actionClear()
++    {
++        $session = Yii::$app->session;
++        $session->open();
++        $session->remove('cart');
++        $session->remove('cart.qty');
++        $session->remove('cart.sum');
++        $this->layout = false;
++        return $this->render('cart-modal', [
++            'session' => $session,
++        ]);
++    }
++
++    public function actionDelItem(){
++        $id = Yii::$app->request->get('id');
++        $session = Yii::$app->session;
++        $session->open();
++        $cart = new Cart();
++        $cart->recalc($id);
++        $this->layout = false;
++        return $this->render('cart-modal', [
++            'session' => $session,
++        ]);
++
++    }
++
++    public function actionShow()
++    {
++        $session = Yii::$app->session;
++        $session->open();
++        $this->layout = false;
++        return $this->render('cart-modal', [
++            'session' => $session,
++        ]);
++    }
++
++    public function actionOrder()
++    {
++        $count= Yii::$app->request->get('count');
++        var_dump($count);
++        $session = Yii::$app->session;
++        $session->open();
++
++        if (Yii::$app->user->isGuest) {
++            $orderForm = new OrderForm();
++            if ($orderForm->load(\Yii::$app->getRequest()->post()) && $orderForm->validate()) {
++                if ($orderForm->process($session)) {
++                    return $this->redirect(Url::to('order'));
++                }
++            }
++        return $this->render('order', [
++            'orderForm' => $orderForm,
++            'session' => $session,
++        ]);
++
++        } else {
++            $session = Yii::$app->session;
++            $session->open();
++            $id = Yii::$app->getUser()->id;
++            $user = User::findOne(['id'=>$id]);
++            $orderForm = new UserOrderForm($user);
++            if ($orderForm->load(\Yii::$app->getRequest()->post()) && $orderForm->validate()) {
++                if ($orderForm->process($session)) {
++                    return $this->redirect(Url::to('order'));
++                }
++            }
++            return $this->render('order', [
++                'orderForm' => $orderForm,
++                'session' => $session,
++            ]);
++
++
++        }
++    }
++
++
++}
+\ No newline at end of file
+diff --git a/controllers/ProductController.php b/controllers/ProductController.php
+index 622cab0..fa863e0 100644
+--- a/controllers/ProductController.php
++++ b/controllers/ProductController.php
+@@ -3,6 +3,7 @@
+ namespace app\controllers;
+ 
+ use app\models\Category;
++use app\models\Product;
+ use app\models\search\ProductSearch;
+ use yii\web\Controller;
+ 
+@@ -21,4 +22,16 @@ class ProductController extends Controller
+             'searchForm' => $searchForm,
+         ]);
+     }
++
++    public function actionDetail($id)
++    {
++        $product = Product::findOne($id);
++        if (!$product){
++            return false;
++        }
++        return $this->render('detail',[
++            'product' => $product,
++        ]);
++    }
++
+ }
+\ No newline at end of file
+diff --git a/controllers/UserController.php b/controllers/UserController.php
+index c6828e2..d6ac353 100644
+--- a/controllers/UserController.php
++++ b/controllers/UserController.php
+@@ -19,6 +19,8 @@ use yii\web\Controller;
+ 
+ class UserController extends Controller
+ {
++
++
+     public function actionIndex(): string
+     {
+         $categories = Category::findAll(['status' => true]);
+@@ -29,13 +31,24 @@ class UserController extends Controller
+             'news'       => $news,
+         ]);
+     }
++
++
++
+     public function actionLogin()
+     {
++        $url = \Yii::$app->getRequest()->getReferrer();
++
++        if (!\Yii::$app->getRequest()->isPost){
++            \Yii::$app->getSession()->set('lr',$url);
++        }
++
++
+         $loginForm = new LoginForm();
+         if ($loginForm->load(\Yii::$app->getRequest()->post()) && $loginForm->validate()) {
+ 
+             if ($loginForm->process()) {
+-                return $this->redirect(Url::to(['index']));
++
++                return $this->redirect(\Yii::$app->getSession()->get('lr'));
+             }
+             \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
+ 
+@@ -43,7 +56,11 @@ class UserController extends Controller
+         return $this->render('login', [
+             'loginForm' => $loginForm,
+         ]);
++
++
+     }
++
++
+     public function actionUser($id)
+     {
+         $modelUser = User::findOne($id);
+@@ -101,12 +118,13 @@ class UserController extends Controller
+     }
+     public function actionRegistration()
+     {
++
+         $registrationForm = new RegistrationForm();
+ 
+         if ($registrationForm->load(\Yii::$app->getRequest()->post()) && $registrationForm->validate()) {
+             if ($registrationForm->process()) {
+ 
+-                return $this->redirect(Url::to(['login']));
++                return $this->redirect(\Yii::$app->getRequest()->getReferrer());
+             }
+         }
+             return $this->render('registration', [
+diff --git a/form/OrderForm.php b/form/OrderForm.php
+new file mode 100644
+index 0000000..7b6a6ce
+--- /dev/null
++++ b/form/OrderForm.php
+@@ -0,0 +1,78 @@
++<?php
++
++namespace app\form;
++
++use app\models\Order;
++use Yii;
++use app\models\ProductOrder;
++use yii\base\Model;
++
++class OrderForm extends Model
++{
++
++
++
++    public $name;
++    public $phone;
++    public $address;
++    public $status = Order::STATUS_NEW;
++
++
++    public function rules(): array
++    {
++        return [
++            [['name','address'], 'safe'],
++            [['phone'], 'integer'],
++
++        ];
++    }
++
++    public function attributeLabels(): array
++    {
++        return [
++
++            'name' => 'Имя',
++            'phone' => 'Телефон',
++            'address' => 'Адрес',
++
++        ];
++    }
++
++    public function process($session)
++    {
++
++            $order = new Order();
++
++            $order->name = $this->name;
++            $order->phone = $this->phone;
++            $order->address = $this->address;
++            $order->status = $this->status;
++            $order->date = date("Y-m-d  H:i:s");
++
++
++        if ($order->save()) {
++        $this->saveOrderItems($session['cart'], $order->id);
++        $session->remove('cart');
++        $session->remove('cart.sum');
++        $session->remove('cart.qty');
++
++        }
++    }
++
++    public function saveOrderItems($items, $order_id){
++
++        foreach ($items as $id => $item) {
++
++            $productOrder = new ProductOrder();
++
++            $productOrder->product_id = $id;
++            $productOrder->order_id = $order_id;
++            $productOrder->count_product = $item['qty'];
++            if ($productOrder->save()) {
++                Yii::$app->session->setFlash('success', 'Ваш заказа принят, мэнэджер мвяжиться с вами');
++            } else {
++                Yii::$app->session->setFlash('error', 'Ошибка, мэнэджер мвяжиться с вами');
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/form/UserOrderForm.php b/form/UserOrderForm.php
+new file mode 100644
+index 0000000..fb85484
+--- /dev/null
++++ b/form/UserOrderForm.php
+@@ -0,0 +1,88 @@
++<?php
++
++namespace app\form;
++
++use app\models\Order;
++use app\models\ProductOrder;
++use app\models\User;
++use yii\base\Model;
++use Yii;
++
++class UserOrderForm extends Model
++{
++    public $address;
++    public $id;
++    public $name;
++    public $phone;
++
++    public $status = 1;
++
++    private $user;
++
++    public function rules(): array
++    {
++        return [
++            [['name','address'], 'safe'],
++            [['phone'], 'integer'],
++        ];
++    }
++
++    public function attributeLabels(): array
++    {
++        return [
++            'name' => 'Имя',
++            'phone' => 'Телефон',
++            'address' => 'Адрес',
++        ];
++    }
++
++    public function __construct(User $user)
++    {
++        $this->address = $user->address;
++        $this->name = $user->name;
++        $this->phone = $user->phone;
++        $this->id = $user->id;
++
++        $this->user = $user;
++    }
++
++    public function process($session)
++    {
++        $user = $this->user;
++
++        $order = new Order();
++
++            $order->name = $user->name;
++            $order->user_id = $user->id;
++            $order->phone = $user->phone;
++            $order->address = $user->address;
++            $order->status = $this->status;
++            $order->date = date("Y-m-d  H:i:s");
++
++        if ($order->save()) {
++            $this->saveOrderItems($session['cart'], $order->id);
++            $session->remove('cart');
++            $session->remove('cart.sum');
++            $session->remove('cart.qty');
++
++        }
++    }
++
++    public function saveOrderItems($items, $order_id){
++
++        foreach ($items as $id => $item) {
++
++            $productOrder = new ProductOrder();
++
++            $productOrder->product_id = $id;
++            $productOrder->order_id = $order_id;
++            $productOrder->count_product = $item['qty'];
++
++            if ($productOrder->save()) {
++                Yii::$app->session->setFlash('success', 'Ваш заказа принят, менеджер мвяжиться с вами');
++            } else {
++                Yii::$app->session->setFlash('error', 'Ошибка, менеджер мвяжиться с вами');
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/models/Cart.php b/models/Cart.php
+new file mode 100644
+index 0000000..6ca1f12
+--- /dev/null
++++ b/models/Cart.php
+@@ -0,0 +1,38 @@
++<?php
++
++namespace app\models;
++
++
++use yii\db\ActiveRecord;
++
++class Cart extends ActiveRecord
++{
++
++    public function addToCart($product, $qty = 1){
++        if (isset($_SESSION['cart'][$product->id])){
++            $_SESSION['cart'][$product->id]['qty'] += $qty;
++        }else{
++            $_SESSION['cart'][$product->id] = [
++                'qty' => $qty,
++                'name' => $product->title,
++                'price' => $product->price,
++                'image' => $product->image,
++
++            ];
++        }
++        $_SESSION['cart.qty'] = isset($_SESSION['cart.qty']) ? $_SESSION['cart.qty'] + $qty : $qty;
++        $_SESSION['cart.sum'] = isset($_SESSION['cart.sum']) ? $_SESSION['cart.sum'] + $qty * $product->price : $qty * $product->price;
++    }
++
++    public function recalc($id){
++        if (!isset($_SESSION['cart'][$id])){
++            return false;
++        }
++        $qtyMinus = $_SESSION['cart'][$id]['qty'];
++        $sumMinus = $_SESSION['cart'][$id]['qty'] * $_SESSION['cart'][$id]['price'];
++        $_SESSION['cart.qty'] -= $qtyMinus;
++        $_SESSION['cart.sum'] -= $sumMinus;
++        unset($_SESSION['cart'][$id]);
++
++    }
++}
+\ No newline at end of file
+diff --git a/modules/adm/views/layouts/header.php b/modules/adm/views/layouts/header.php
+index 6374a1e..2005ba3 100755
+--- a/modules/adm/views/layouts/header.php
++++ b/modules/adm/views/layouts/header.php
+@@ -15,6 +15,7 @@ $tiketCount = 3;
+ 
+ <header class="main-header">
+ 
++
+     <?= Html::a('<span class="logo-mini">JK</span><span class="logo-lg">Just-K</span>', Yii::$app->homeUrl, ['class' => 'logo']) ?>
+ 
+     <nav class="navbar navbar-static-top" role="navigation">
+diff --git a/views/cart/cart-modal.php b/views/cart/cart-modal.php
+new file mode 100644
+index 0000000..2c3bd52
+--- /dev/null
++++ b/views/cart/cart-modal.php
+@@ -0,0 +1,40 @@
++<?php
++if (!empty($session['cart'])) : ?>
++    <div class="table-responsive">
++        <table class="table table-hover table-striped">
++    <thead>
++        <tr>
++            <th>Фото</th>
++            <th>Название</th>
++            <th>Количество</th>
++            <th>Цена</th>
++            <th><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </th>
++        </tr>
++    </thead>
++            <tbody>
++            <?php foreach ($session['cart'] as $id => $item): ?>
++            <tr>
++                <td><?= \yii\helpers\Html::img("@web/image/product/{$item['image']}", ['alt' => $item['name'], 'height' => 50] )?></td>
++                <td><?= $item['name']?></td>
++                <td><?= $item['qty']?></td>
++                <td><?= $item['price']?></td>
++                <td>
++                    <span data-id="<?= $id?>" class="glyphicon glyphicon-remove text-danger del-item" aria-hidden="true"></span>
++                </td>
++            </tr>
++            <?php endforeach ?>
++            <tr>
++                <td colspan="4">Итого:</td>
++                <td><?= $session['cart.qty']?></td>
++            </tr>
++            <tr>
++                <td colspan="4">На сумму:</td>
++                <td><?= $session['cart.sum']?></td>
++            </tr>
++            </tbody>
++        </table>
++    </div>
++
++<?php else: ?>
++<h3>Корзина пустая</h3>
++<?php endif;?>
+diff --git a/views/cart/order.php b/views/cart/order.php
+new file mode 100644
+index 0000000..90a9ea7
+--- /dev/null
++++ b/views/cart/order.php
+@@ -0,0 +1,111 @@
++
++<?php
++/**
++ * @var CartController $orderForm
++ *  @var  CartController $session,
++
++ */
++use app\models\User;
++use app\controllers\CartController;
++use yii\helpers\Html;
++use yii\widgets\ActiveForm;
++use yii\helpers\Url;
++
++$this->title = 'Регистрация';
++
++$form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
++
++<div class="container" >
++
++    <div class="row" >
++        <?php if ($session['cart']){ ?>
++    <div class="col-lg-5">
++    <div class="col-lg-9">
++        <div class="box">
++            <div class="box-header">
++                <?= $form->field($orderForm, 'name')->hint('Введите Имя') ?>
++                <?= $form->field($orderForm, 'phone')->hint('Введите номер телефона') ?>
++                <?= $form->field($orderForm, 'address')->hint('Введите Адрес') ?>
++            </div>
++            <div class="box-body">
++                <div class=" pull-right">
++                   <?= Html::submitButton('Оформить заказ',['class' => 'btn btn-success'])?>
++            </div>
++            </div>
++        </div>
++    </div>
++     <?php } ?>
++
++                </div>
++    <div class="col-sm-7  " >
++
++        <?php if (Yii::$app->session->hasFlash('success')){?>
++            <div class="alert alert-success alert-dismissible" role="alert">
++                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
++                     <span aria-hidden="true">&times;</span>
++                 </button>
++                <?php echo Yii::$app->session->getFlash('success')?>
++            </div>
++        <?php } ?>
++
++        <?php if (Yii::$app->session->hasFlash('error')){?>
++            <div class="alert alert-success alert-dismissible" role="alert">
++                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
++                    <span aria-hidden="true">&times;</span>
++                </button>
++                <?php echo Yii::$app->session->getFlash('error')?>
++            </div>
++        <?php } ?>
++        <?php
++        if (!empty($session['cart'])) : ?>
++            <div class="table-responsive">
++                <table class="table table-hover table-striped">
++                    <thead>
++                    <tr>
++                        <th>Фото</th>
++                        <th>Название</th>
++                        <th>Количество</th>
++                        <th>Цена</th>
++                        <th>Сумма</th>
++                        <th><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </th>
++                    </tr>
++                    </thead>
++                    <tbody>
++                    <?php foreach ($session['cart'] as $id => $item): ?>
++                        <tr>
++                            <td><?= \yii\helpers\Html::img("@web/image/product/{$item['image']}", ['alt' => $item['name'], 'height' => 50] )?></td>
++                            <td><a href="<?=Url::to(['product/detail', 'id'=>$id])?>"><?= $item['name']?></a></td>
++                            <td>
++                                <form action="get">
++                                    <input  class="count" type="number" min="1" value="<?= $item['qty']?>" id="qty">
++                                </form>
++                            </td>
++                            <td><?= $item['price']?></td>
++                            <td><?= $item['qty']* $item['price']?></td>
++                            <td>
++                                <span data-id="<?= $id?>" class="glyphicon glyphicon-remove text-danger del-item" aria-hidden="true"></span>
++                            </td>
++                        </tr>
++                    <?php endforeach ?>
++                    <tr>
++                        <td colspan="5">Итого:</td>
++                        <td><?= $session['cart.qty']?></td>
++                    </tr>
++                    <tr>
++                        <td colspan="5">На сумму:</td>
++                        <td><?= $session['cart.sum']?></td>
++                    </tr>
++                    </tbody>
++                </table>
++            </div>
++
++        <?php else: ?>
++            <h3>Корзина пустая</h3>
++        <?php endif;?>
++    </div>
++
++</div>
++</div>
++
++<?php ActiveForm::end(); ?>
++
+diff --git a/views/layouts/main.php b/views/layouts/main.php
+index a6295cd..3ff018c 100644
+--- a/views/layouts/main.php
++++ b/views/layouts/main.php
+@@ -4,6 +4,7 @@
+ /* @var $content string */
+ 
+ use app\modules\adm\forms\search\ProductSearch;
++use yii\bootstrap\Modal;
+ use app\widgets\Alert;
+ use yii\helpers\Html;
+ use yii\bootstrap\Nav;
+@@ -37,9 +38,11 @@ AppAsset::register($this);
+             <div class="row">
+                 <div class="col-sm-12">
+                     <div class="pull-right">
++
+                         <?php if (Yii::$app->user->isGuest){?>
+                             <a href="<?=Url::to(['user/login'])?>" class="btn btn-sm btn-default">Войти</a> |
+                             <a href="<?=Url::to(['user/registration'])?>" class="btn btn-sm btn-default">Регистрация</a>
++                            <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-sm btn-default">Корзина</a>
+                         <?php }else{ ?>
+                             <?= Html::a(
+                                 'Профиль',
+@@ -51,6 +54,10 @@ AppAsset::register($this);
+                                 Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
+                                 [ 'class' => 'btn btn-default btn-flat']
+                             ) ?>
++
++                            <?= Html::a(
++                                'Корзина',
++                                Url::to(['cart/order']), [ 'class' => 'btn btn-default btn-flat']) ?>
+                          <?php }?>
+                     </div>
+                 </div>
+@@ -67,6 +74,19 @@ AppAsset::register($this);
+             <p class="pull-right"><?= Yii::powered() ?></p>
+         </div>
+     </footer>
++    <?php Modal::begin([
++            'header' => '<h2>Корзина</h2>',
++            'id' => 'cart',
++            'footer' =>' 
++                <button type="button" class="btn btn-default" data-dismiss="modal">Продолжить</button>
++                <a href="'. Url::to(['cart/order']).' " type="button" class="btn btn-primary">Оформить заказ</a>
++                <button type="button" class="btn btn-danger" onclick="clearCart()">Очистить клрзину</button>
++                ',
++
++        'size' => 'model-lg',
++    ]);
++   Modal::end();
++    ?>
+ 
+     <?php $this->endBody() ?>
+     </body>
+diff --git a/views/product/detail.php b/views/product/detail.php
+new file mode 100644
+index 0000000..30e929b
+--- /dev/null
++++ b/views/product/detail.php
+@@ -0,0 +1,60 @@
++<?php
++
++/**
++ *
++ * @var Product      $product
++ *
++ */
++
++use app\models\Category;
++use app\models\Product;
++use app\models\search\ProductSearch;
++use kartik\select2\Select2;
++use yii\bootstrap\ActiveForm;
++use yii\helpers\Html;
++use yii\helpers\Url;
++
++$this->title = 'Главная';
++?>
++
++    <div class="col-lg-offset-2 col-sm-12 ">
++        <div class="row">
++            <h2><?= $product->title ?></h2>
++
++            <hr>
++        </div>
++        <div class="row">
++                <div class="col-sm-4 col-lg-4">
++                    <div style="text-align:center; margin-bottom: 10px; padding-bottom: 10px; width: 100%; height: 250px" class="btn-default" >
++
++                        <?= Html::img("@web/image/product/$product->image",['height' => 150])?>
++                      </div>
++                </div>
++                    <div style="border-color: #0a568c">
++                        <p class="bg-light-blue"><h4>Цена: $  <?= $product->price ?></p></h4>
++                        <p class="bg-light-blue"><h5>Код продукта :  <?= $product->id ?></p></h5>
++
++                        <form action="" method="post">
++                            <h4>Количество :</h4>
++                            <input type="number" min="1" value="1" id="qty">
++                            <a href="<?=Url::to(['cart/add', 'id'=>$product->id,])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart"><?= Html::img("@web/image/cart.png",['height' => 15])?>В корзину</a>
++                        </form>
++
++
++
++
++                    </div>
++
++        </div>
++        <div class="row">
++            <hr>
++            <p><?= $product->description ?></p>
++        </div>
++    </div>
++
++
++
++
++
++
++
+diff --git a/views/product/index.php b/views/product/index.php
+index 9754fc3..00a48f1 100755
+--- a/views/product/index.php
++++ b/views/product/index.php
+@@ -14,6 +14,7 @@ use app\models\search\ProductSearch;
+ use kartik\select2\Select2;
+ use yii\bootstrap\ActiveForm;
+ use yii\helpers\Html;
++use yii\helpers\Url;
+ 
+ $this->title = 'Главная';
+ ?>
+@@ -71,9 +72,9 @@ $this->title = 'Главная';
+                 <div class="col-sm-4 col-lg-4">
+                     <div style="text-align:center; margin-bottom: 10px; padding-bottom: 10px; width: 100%; height: 250px" class="btn-default" >
+                         <p><?= $product->title ?></p>
+-                            <a href="productdetail.html"><img src="image/product/<?=$product->image?>" height="50%"/></a>
++                            <a href="<?=Url::to(['detail', 'id'=>$product->id])?>"><img src="image/product/<?=$product->image?>" height="50%"/></a>
+                             <p class="bg-light-blue">$ <?= $product->price ?></p>
+-                            <a href="shoppingcart.html" class="btn btn-sm btn-warning"><img src="image/cart.png" width="20%"/> В корзину</a>
++                            <a href="<?=Url::to(['cart/add', 'id'=>$product->id])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart"><img src="image/cart.png" width="20%"/> В корзину</a>
+                     </div>
+                 </div>
+             <?php } ?>
+diff --git a/views/site/index.php b/views/site/index.php
+index e5f0cd6..75ac579 100644
+--- a/views/site/index.php
++++ b/views/site/index.php
+@@ -68,7 +68,14 @@ $this->title = 'Главная';
+ 
+ 
+ 
++
++
+         </wrapper>
++
++<!--        <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>-->
++<!--        <script src="http://cdn.jsdelivr.net/npm/bootstrrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>-->
++<!--        <script src="assets/js/main.js"></script>-->
++
+         <script>
+             $('.carousel').carousel({
+                 interval: 6000
+diff --git a/views/user/login.php b/views/user/login.php
+index 4ff10e7..27d9b0d 100644
+--- a/views/user/login.php
++++ b/views/user/login.php
+@@ -15,14 +15,14 @@ $this->title = 'Вход';
+         'options' => ['class' => 'form-horizontal'],
+     ]) ?>
+     <div class="form-group">
+-        <div class="col-lg-offset-1 col-lg-3">
++        <div class="col-lg-offset-4 col-lg-3">
+         <?= $form->field($loginForm, 'email')->hint('Введите Email') ?>
+         <?= $form->field($loginForm, 'password')->passwordInput()->hint('Введите пароль') ?>
+         </div>
+     </div>
+ 
+     <div class="form-group">
+-        <div class="col-lg-offset-1 col-lg-11">
++        <div class="col-lg-offset-5 col-lg-11">
+             <?= Html::submitButton('Вход', ['class' => 'btn btn-success']) ?>
+             <?= Html::a('Регистрация',Url::to(['registration']), ['class' => 'btn btn-success']) ?>
+         </div>
+diff --git a/views/user/registration.php b/views/user/registration.php
+index 9645662..703668d 100644
+--- a/views/user/registration.php
++++ b/views/user/registration.php
+@@ -12,18 +12,19 @@ use yii\widgets\ActiveForm;
+ $this->title = 'Регистрация';
+ 
+  $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+-    <div class="row">
+-        <div class="col-sm-3">
++
++    <div class="row" >
++        <div class="col-lg-offset-4 col-lg-3">
+             <div class="box">
+                 <div class="box-header">
+-                    <?= $form->field($registrationForm, 'name')?>
+-                    <?= $form->field($registrationForm, 'last_name')?>
+-                    <?= $form->field($registrationForm, 'email')?>
+-                    <?= $form->field($registrationForm, 'password')?>
+-                    <?= $form->field($registrationForm, 'phone')?>
+-                    <?= $form->field($registrationForm, 'address')?>
++                    <?= $form->field($registrationForm, 'name')->hint('Введите Имя') ?>
++                    <?= $form->field($registrationForm, 'last_name')->hint('Введите Фамилию') ?>
++                    <?= $form->field($registrationForm, 'email')->hint('Введите Email') ?>
++                    <?= $form->field($registrationForm, 'password')->hint('Введите Пароль') ?>
++                    <?= $form->field($registrationForm, 'phone')->hint('Введите номер телефона') ?>
++                    <?= $form->field($registrationForm, 'address')->hint('Введите Адрес') ?>
+                 </div>
+-                <div class="box-body">
++                <div class="box-body">a
+                     <div class=" pull-right">
+                         <?= Html::submitButton('Регистрация',['class' => 'btn btn-success'])?>
+ 
+@@ -33,5 +34,6 @@ $this->title = 'Регистрация';
+             </div>
+         </div>
+     </div>
++
+ <?php ActiveForm::end(); ?>
+ 
+diff --git a/web/css/site.css b/web/css/site.css
+index 3f8218f..e0ac892 100755
+--- a/web/css/site.css
++++ b/web/css/site.css
+@@ -3,6 +3,7 @@ body {
+     height: 100%;
+ }
+ 
++
+ .wrap {
+     min-height: 100%;
+     height: auto;
+@@ -136,6 +137,7 @@ a.desc:after {
+         transform: translateX(0);
+     }
+ }
++
+ @keyframes anime-P {
+     from {
+         opacity: 0;
+@@ -145,4 +147,8 @@ a.desc:after {
+         opacity: 1;
+         transform: translateX(0);
+     }
+-}
+\ No newline at end of file
++}
++
++.del-item{
++    cursor: pointer;
++}
+diff --git a/web/js/main.js b/web/js/main.js
+new file mode 100644
+index 0000000..5887be8
+--- /dev/null
++++ b/web/js/main.js
+@@ -0,0 +1,77 @@
++function showCart(cart) {
++    $('#cart .modal-body').html(cart);
++    $('#cart').modal();
++}
++
++$('#cart .modal-body').on('click', '.del-item', function (){
++   var id = $(this).data('id');
++    $.ajax({
++        url: '/cart/del-item',
++        data: {id: id},
++        type: 'GET',
++        success: function (res){
++            if (!res) alert('Error');
++            showCart(res);
++        },
++        error: function (){
++            alert('Error');
++        }
++    });
++})
++
++
++function getCart(){
++    $.ajax({
++        url: '/cart/show',
++        type: 'GET',
++        success: function (res){
++            if (!res) alert('Error');
++            showCart(res);
++        },
++        error: function (){
++            alert('Error');
++        }
++    });
++    return false;
++}
++function clearCart(){
++    $.ajax({
++        url: '/cart/clear',
++        type: 'GET',
++        success: function (res){
++            if (!res) alert('Error');
++            showCart(res);
++        },
++        error: function (){
++            alert('Error');
++        }
++    });
++}
++
++$('.count').on('click', function (r){
++    r.preventDefault();
++    var count = $(this).data('qty');
++    $.ajax({
++        url: '/cart/order',
++        data: {count: count},
++        type: 'GET'
++    })
++});
++
++$('.add-to-cart').on('click', function (e) {
++    e.preventDefault();
++    var id = $(this).data('id'),
++    qty = $('#qty').val();
++    $.ajax({
++        url: '/cart/add',
++        data: {id: id, qty: qty},
++        type: 'GET',
++        success: function (res){
++            if (!res) alert('Error');
++            showCart(res);
++        },
++        error: function (){
++            alert('Error');
++        }
++    });
++});
+\ No newline at end of file
