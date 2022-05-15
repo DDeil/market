@@ -48,16 +48,6 @@ function clearCart(){
     });
 }
 
-$('.count').on('click', function (r){
-    r.preventDefault();
-    var count = $(this).data('qty');
-    $.ajax({
-        url: '/cart/order',
-        data: {count: count},
-        type: 'GET'
-    })
-});
-
 $('.add-to-cart').on('click', function (e) {
     e.preventDefault();
     var id = $(this).data('id'),

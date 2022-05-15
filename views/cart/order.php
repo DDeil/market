@@ -76,11 +76,18 @@ $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
                             <td><?= \yii\helpers\Html::img("@web/image/product/{$item['image']}", ['alt' => $item['name'], 'height' => 50] )?></td>
                             <td><a href="<?=Url::to(['product/detail', 'id'=>$id])?>"><?= $item['name']?></a></td>
                             <td>
-                                <form action="get">
-                                    <input  class="count" type="number" min="1" value="<?= $item['qty']?>" id="qty">
-                                </form>
+                                <div class="row">
+                                <div class="col-md-2">
+                                    <p><?= $item['qty']?></p>
+                                </div>
+                                <div class="col-md-8">
+                                    <?= Html::a('-', Url::to(['minus', 'countMinus'=>$item['qty'], 'id'=>$id]), ['class' => 'btn btn-warning'])?>
+
+                                    <?= Html::a('+', Url::to(['plus', 'countPlus'=>$item['qty'], 'id'=>$id]), ['class' => 'btn btn-success'])?>
+                                </div>
+                                </div>
                             </td>
-                            <td><?= $item['price']?></td>
+                            <td><p><?= $item['price']?></p></td>
                             <td><?= $item['qty']* $item['price']?></td>
                             <td>
                                 <span data-id="<?= $id?>" class="glyphicon glyphicon-remove text-danger del-item" aria-hidden="true"></span>
