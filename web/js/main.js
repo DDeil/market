@@ -19,8 +19,6 @@ $('#cart .modal-body').on('click', '.del-item', function (){
     });
 })
 
-
-
 function getCart(){
     $.ajax({
         url: '/cart/show',
@@ -35,6 +33,7 @@ function getCart(){
     });
     return false;
 }
+
 function clearCart(){
     $.ajax({
         url: '/cart/clear',

@@ -115,4 +115,4 @@ $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
 </div>
 
 <?php ActiveForm::end(); ?>
-
+<?php \yii\widgets\Pjax::begin(); ?>

@@ -5,19 +5,19 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
-class Cart extends ActiveRecord
+class Cart
 {
 
-    public function addToCart($product, $qty = 1){
-        if (isset($_SESSION['cart'][$product->id])){
+    public function addToCart($product, $qty = 1)
+    {
+        if (isset($_SESSION['cart'][$product->id])) {
             $_SESSION['cart'][$product->id]['qty'] += $qty;
-        }else{
+        } else {
             $_SESSION['cart'][$product->id] = [
-                'qty' => $qty,
-                'name' => $product->title,
+                'qty'   => $qty,
+                'name'  => $product->title,
                 'price' => $product->price,
                 'image' => $product->image,
-
             ];
         }
         $_SESSION['cart.qty'] = isset($_SESSION['cart.qty']) ? $_SESSION['cart.qty'] + $qty : $qty;

@@ -21,15 +21,14 @@ class CartController extends Controller
           $qty = 1;
         }
         $product = Product::findOne($id);
-        if (empty($product)){
+        if (!$product){
             return false;
         }
         $session = Yii::$app->session;
         $session->open();
         $cart = new Cart();
         $cart->addToCart($product, $qty);
-        $this->layout = false;
-        return $this->render('cart-modal', [
+        return $this->renderAjax('cart-modal', [
             'session' => $session,
         ]);
     }
@@ -64,7 +63,6 @@ class CartController extends Controller
         $session->open();
         $cart = new Cart();
         $cart->recalc($id);
-        $this->layout = false;
         return $this->redirect(Yii::$app->getRequest()->getReferrer());
 
     }
@@ -126,23 +124,20 @@ class CartController extends Controller
         $session = Yii::$app->session;
         $session->open();
         if ($col>=1){
-        foreach ($session['cart'] as $ids =>  $item){
-            if ($ids == $id){
-                $item['qty']= $col;
-                $_SESSION['cart'][$id] = [
-                    'qty' =>  $item['qty'],
-                    'name' =>  $item['name'],
-                    'price' =>  $item['price'],
-                    'image' =>  $item['image'],
-                    ];
-
-                $_SESSION['cart.qty'] -= 1;
-                $_SESSION['cart.sum'] -= $item['price'];
+            foreach ($session['cart'] as $ids =>  $item){
+                if ($ids == $id){
+                    $item['qty']= $col;
+                    $_SESSION['cart'][$id] = [
+                        'qty' =>  $item['qty'],
+                        'name' =>  $item['name'],
+                        'price' =>  $item['price'],
+                        'image' =>  $item['image'],
+                        ];
+                    $_SESSION['cart.qty'] -= 1;
+                    $_SESSION['cart.sum'] -= $item['price'];
+                }
             }
-
         }
-    }
-
         return $this->redirect(Url::to('order'));
     }
 }
