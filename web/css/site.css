@@ -152,3 +152,7 @@ a.desc:after {
 .del-item{
     cursor: pointer;
 }
+.del-items{
+    cursor: pointer;
+}
+

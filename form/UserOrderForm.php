@@ -36,8 +36,11 @@ class UserOrderForm extends Model
         ];
     }
 
-    public function __construct(User $user)
+    public function __construct(User $user = null)
     {
+        if (!$user) {
+            return;
+        }
         $this->address = $user->address;
         $this->name = $user->name;
         $this->phone = $user->phone;
@@ -48,23 +51,20 @@ class UserOrderForm extends Model
 
     public function process($session)
     {
-        $user = $this->user;
-
         $order = new Order();
 
-            $order->name = $user->name;
-            $order->user_id = $user->id;
-            $order->phone = $user->phone;
-            $order->address = $user->address;
-            $order->status = $this->status;
-            $order->date = date("Y-m-d  H:i:s");
+        $order->name = $this->name;
+        $order->user_id = $this->id ?? null;
+        $order->phone = $this->phone;
+        $order->address = $this->address;
+        $order->status = $this->status;
+        $order->date = date("Y-m-d  H:i:s");
 
         if ($order->save()) {
             $this->saveOrderItems($session['cart'], $order->id);
             $session->remove('cart');
             $session->remove('cart.sum');
             $session->remove('cart.qty');
-
         }
     }
 
@@ -77,11 +77,10 @@ class UserOrderForm extends Model
             $productOrder->product_id = $id;
             $productOrder->order_id = $order_id;
             $productOrder->count_product = $item['qty'];
-
             if ($productOrder->save()) {
-                Yii::$app->session->setFlash('success', 'Ваш заказа принят, менеджер мвяжиться с вами');
+                Yii::$app->session->setFlash('success', 'Ваш заказа принят, мэнэджер мвяжиться с вами');
             } else {
-                Yii::$app->session->setFlash('error', 'Ошибка, менеджер мвяжиться с вами');
+                Yii::$app->session->setFlash('error', 'Ошибка, мэнэджер мвяжиться с вами');
             }
         }
     }

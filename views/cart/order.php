@@ -89,8 +89,8 @@ $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
                             </td>
                             <td><p><?= $item['price']?></p></td>
                             <td><?= $item['qty']* $item['price']?></td>
-                            <td>
-                                <span data-id="<?= $id?>" class="glyphicon glyphicon-remove text-danger del-item" aria-hidden="true"></span>
+                            <td class="td">
+                                <a href="<?=Url::to(['/cart/del', 'id' => $id])?>" class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></a>
                             </td>
                         </tr>
                     <?php endforeach ?>

@@ -20,6 +20,7 @@ $('#cart .modal-body').on('click', '.del-item', function (){
 })
 
 
+
 function getCart(){
     $.ajax({
         url: '/cart/show',

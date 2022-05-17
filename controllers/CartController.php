@@ -59,7 +59,15 @@ class CartController extends Controller
         ]);
 
     }
+    public function actionDel($id){
+        $session = Yii::$app->session;
+        $session->open();
+        $cart = new Cart();
+        $cart->recalc($id);
+        $this->layout = false;
+        return $this->redirect(Yii::$app->getRequest()->getReferrer());
 
+    }
     public function actionShow()
     {
         $session = Yii::$app->session;
@@ -75,34 +83,19 @@ class CartController extends Controller
         $session = Yii::$app->session;
         $session->open();
 
-        if (Yii::$app->user->isGuest) {
-            $orderForm = new OrderForm();
-            if ($orderForm->load(\Yii::$app->getRequest()->post()) && $orderForm->validate()) {
-                if ($orderForm->process($session)) {
-                    return $this->redirect(Url::to('order'));
-                }
+        $id   = Yii::$app->getUser()->id ?? null;
+        $user = User::findOne(['id' => $id]);
+        $orderForm = new UserOrderForm($user);
+
+        if ($orderForm->load(\Yii::$app->getRequest()->post()) && $orderForm->validate()) {
+            if ($orderForm->process($session)) {
+                return $this->redirect(Url::to('order'));
             }
+        }
         return $this->render('order', [
             'orderForm' => $orderForm,
             'session' => $session,
         ]);
-
-        } else {
-            $session = Yii::$app->session;
-            $session->open();
-            $id = Yii::$app->getUser()->id;
-            $user = User::findOne(['id'=>$id]);
-            $orderForm = new UserOrderForm($user);
-            if ($orderForm->load(\Yii::$app->getRequest()->post()) && $orderForm->validate()) {
-                if ($orderForm->process($session)) {
-                    return $this->redirect(Url::to('order'));
-                }
-            }
-            return $this->render('order', [
-                'orderForm' => $orderForm,
-                'session' => $session,
-            ]);
-        }
     }
 
     public function actionPlus($countPlus, $id)
@@ -110,6 +103,7 @@ class CartController extends Controller
         $col = $countPlus +1;
         $session = Yii::$app->session;
         $session->open();
+
         foreach ($session['cart'] as $ids =>  $item){
             if ($ids == $id){
                 $item['qty']= $col;
@@ -119,6 +113,8 @@ class CartController extends Controller
                     'price' =>  $item['price'],
                     'image' =>  $item['image'],
                 ];
+                $_SESSION['cart.qty'] += 1;
+                $_SESSION['cart.sum'] += $item['price'];
             }
         }
         return $this->redirect(Url::to('order'));
@@ -129,6 +125,7 @@ class CartController extends Controller
         $col = $countMinus -1;
         $session = Yii::$app->session;
         $session->open();
+        if ($col>=1){
         foreach ($session['cart'] as $ids =>  $item){
             if ($ids == $id){
                 $item['qty']= $col;
@@ -138,8 +135,14 @@ class CartController extends Controller
                     'price' =>  $item['price'],
                     'image' =>  $item['image'],
                     ];
+
+                $_SESSION['cart.qty'] -= 1;
+                $_SESSION['cart.sum'] -= $item['price'];
             }
+
         }
+    }
+
         return $this->redirect(Url::to('order'));
     }
 }

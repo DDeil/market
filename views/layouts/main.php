@@ -81,7 +81,7 @@ AppAsset::register($this);
                 <button type="button" class="btn btn-default" data-dismiss="modal">Продолжить</button>
                 <a href="'. Url::to(['cart/order']).' " type="button" class="btn btn-primary">Оформить заказ</a>
                 <button type="button" class="btn btn-danger" onclick="clearCart()">Очистить клрзину</button>
-                ',
+                 ',
 
         'size' => 'model-lg',
     ]);
