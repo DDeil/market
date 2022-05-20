@@ -1,5 +1,8 @@
 <?php
 
+use app\models\User;
+use yii\web\Session;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -20,9 +23,13 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user'         => [
-            'identityClass'   => \app\models\User::class,
+            'identityClass'   => User::class,
             'enableAutoLogin' => true,
             'loginUrl'        => ['/user/login', 'redirect' => "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"],
+//            'identityCookie'  => [
+//                'domain' => '.market.localhost',
+//                'name'   => '___identity',
+//            ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -50,6 +57,14 @@ $config = [
             'rules' => [
 //                '<token>' => 'site/go',
             ],
+        ],
+        'session'      => [
+            'class'        => Session::class,
+            'cookieParams' => [
+//                'domain' => 'market.localhost/',
+                'name'   => '__session',
+            ],
+            'timeout'      => 30,
         ],
     ],
     'modules' => [
