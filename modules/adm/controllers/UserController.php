@@ -29,31 +29,6 @@ class UserController extends Controller
             ]);
     }
 
-    public function actionLogin()
-    {
-        $loginForm = new LoginForm();
-        if ($loginForm->load(\Yii::$app->getRequest()->post()) && $loginForm->validate()) {
-
-            if ($loginForm->process()) {
-
-                return $this->redirect('list');
-            }
-            \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
-
-        }
-        return $this->render('login', [
-            'loginForm' => $loginForm,
-        ]);
-    }
-
-    public function actionLogout($id)
-    {
-        $user = User::findOne($id);
-        \Yii::$app->user->logout($user);
-        return $this->redirect(Url::to(['list']));
-
-    }
-
     public function actionAdd()
     {
         $addForm = new AddUserForm();

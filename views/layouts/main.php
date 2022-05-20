@@ -11,6 +11,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use app\assets\AppAsset;
 use yii\helpers\Url;
+use app\models\User;
 
 AppAsset::register($this);
 ?>
@@ -44,6 +45,15 @@ AppAsset::register($this);
                             <a href="<?=Url::to(['user/registration'])?>" class="btn btn-sm btn-default">Регистрация</a>
                             <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-sm btn-default">Корзина</a>
                         <?php }else{ ?>
+                            <?php $user = User::findOne(['id'=> Yii::$app->user->getId()]);
+                                if ($user->type == User::TYPE_DIRECTOR || $user->type == User::TYPE_ADM)
+                                {?>
+                            <?= Html::a(
+                                'ADM',
+                                Url::to(['adm/user/list']),
+                                [ 'class' => 'btn btn-default btn-flat']
+                            ) ?>
+                            <?php }?>
                             <?= Html::a(
                                 'Профиль',
                                 Url::to(['/user/user', 'id' => Yii::$app->getUser()->id]),
@@ -54,7 +64,6 @@ AppAsset::register($this);
                                 Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
                                 [ 'class' => 'btn btn-default btn-flat']
                             ) ?>
-
                             <?= Html::a(
                                 'Корзина',
                                 Url::to(['cart/order']), [ 'class' => 'btn btn-default btn-flat']) ?>
