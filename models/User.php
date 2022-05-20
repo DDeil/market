@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -14,7 +13,7 @@ use yii\web\IdentityInterface;
  * @property string     $last_name
  * @property string     $phone
  * @property string     $address
- * @property string     $operator
+ * @property integer    $type
  *
  * @property Order        [] $orders
  * @property Product      [] $products
@@ -25,6 +24,18 @@ use yii\web\IdentityInterface;
 
 class User extends ActiveRecord implements IdentityInterface
 {
+    public const TYPE_DIRECTOR  = 1;
+    public const TYPE_ADM       = 2;
+    public const TYPE_USER      = 3;
+
+    public const    TITLE_TYPE_DIRECTOR = 'Админ';
+    public const    TITLE_TYPE_ADM      = 'Сотрудник';
+    public const    TITLE_TYPE_USER     = 'Пользователь';
+
+    public const TYPE_LIST = [
+        self::TYPE_ADM      => self::TITLE_TYPE_ADM,
+        self::TYPE_USER     => self::TITLE_TYPE_USER,
+    ];
 
     /**
      * @return string
@@ -43,6 +54,7 @@ class User extends ActiveRecord implements IdentityInterface
             'password'      => 'Пароль',
             'phone'         => 'Телефон',
             'address'       => 'Адресс',
+            'type'          => 'Вид деятельности',
         ];
     }
 
@@ -50,12 +62,15 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['name','last_name'] ,'string'],
-            [['phone','id'] ,'integer'],
+            [['phone','id','type'] ,'integer'],
             [['email','password','address'], 'safe'],
         ];
     }
 
-
+    public function getTextType(): string
+    {
+        return self::TYPE_LIST[$this->type] ?? self::TITLE_TYPE_DIRECTOR;
+    }
 
     public function  getOrders()
     {
@@ -71,7 +86,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(ProductOrder::class,['order_id'=>'id'])->via('order');
     }
-
 
 
     public static function findIdentity($id)

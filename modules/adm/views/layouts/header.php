@@ -28,7 +28,26 @@ $tiketCount = 3;
 
             <ul class="nav navbar-nav">
 
-
+                <?php if (Yii::$app->user->isGuest){?>
+                <li class="messages-menu <?= (Yii::$app->controller->id == 'webmaster' && Yii::$app->controller->action->id == 'list')?'active':''?>">
+                    <a href="<?=Url::to(['/adm/user/login'])?>" title="Веб мастера">
+                        <i>Вход в админку</i>
+                    </a>
+                </li>
+                <?php } ?>
+                <li class="messages-menu ">
+                    <?php $user = \app\models\User::findOne(['id' =>Yii::$app->getUser()->id ]);
+                if ($user){?>
+                    <i class="messages-menu "><?php echo $user->name ." ".$user->last_name?></i>
+                    <?php }?>
+                </li>
+                <?php if (!Yii::$app->user->isGuest){?>
+                <li class="messages-menu <?= (Yii::$app->controller->id == 'webmaster' && Yii::$app->controller->action->id == 'list')?'active':''?>">
+                    <a href="<?=Url::to(['/adm/user/logout', 'id' => Yii::$app->getUser()->id])?>" title="Веб мастера">
+                        <i>Выход</i>
+                    </a>
+                </li>
+                <?php } ?>
                 <li class="messages-menu <?= (Yii::$app->controller->id == 'webmaster' && Yii::$app->controller->action->id == 'list')?'active':''?>">
                     <a href="<?=Url::to(['/adm/webmaster/list'])?>" title="Веб мастера">
                         <i class="fa fa-dashboard"></i>
@@ -63,7 +82,7 @@ $tiketCount = 3;
 
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="#" class="user-image" alt="<?= $userEmail ?>">
-                        <span class="hidden-xs"><?= $userEmail ?></span>
+                        <span class="hidden-xs"></span>
                     </a>
 
                     <ul class="dropdown-menu">

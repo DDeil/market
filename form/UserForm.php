@@ -19,11 +19,12 @@ class UserForm extends Model
 
 
 
+
     public function rules(): array
     {
         return [
             [['name','last_name', 'address'] ,'string'],
-            [['phone'] ,'integer'],
+            [['phone',] ,'integer'],
             [['email','password'], 'safe'],
         ];
     }
@@ -37,6 +38,7 @@ class UserForm extends Model
             'password'      => 'Пароль',
             'phone'         => 'Телефон',
             'address'       => 'Адрес',
+            'type'          => 'Тип',
 
         ];
     }
@@ -53,6 +55,7 @@ class UserForm extends Model
         $user->password = md5($this->password);
         $user->phone = $this->phone;
         $user->address = $this->address;
+
 
 
         if (!preg_match("/^(?:[a-z0-9]+(?:[-_.]?[a-z0-9]+)?@[a-z0-9_.-]+(?:\.?[a-z0-9]+)?\.[a-z]{2,5})$/i", $this->email)) {

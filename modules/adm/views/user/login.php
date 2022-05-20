@@ -4,20 +4,20 @@
  * @var
  */
 
-use app\controllers\UserController;
+use app\modules\adm\controllers\UserController;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 $this->title = 'Вход';
-    $form = ActiveForm::begin([
-        'id' => 'login-form',
-        'options' => ['class' => 'form-horizontal'],
-    ]) ?>
+$form = ActiveForm::begin([
+    'id' => 'login-form',
+    'options' => ['class' => 'form-horizontal'],
+]) ?>
     <div class="form-group">
         <div class="col-lg-offset-4 col-lg-3">
-        <?= $form->field($loginForm, 'email')->hint('Введите Email') ?>
-        <?= $form->field($loginForm, 'password')->passwordInput()->hint('Введите пароль') ?>
+            <?= $form->field($loginForm, 'email')->hint('Введите Email') ?>
+            <?= $form->field($loginForm, 'password')->passwordInput()->hint('Введите пароль') ?>
         </div>
     </div>
 
@@ -31,8 +31,8 @@ $this->title = 'Вход';
 <?php ActiveForm::end() ?>
 <?php
 if (\Yii::$app->user->isGuest){
-echo ' ne avto';
+    echo ' ne avto';
 }else{
 
-echo '  avto';
+    echo '  avto';
 }

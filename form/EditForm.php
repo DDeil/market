@@ -14,6 +14,7 @@ class EditForm extends Model
     public $password;
     public $phone;
     public $address;
+    public $type;
 
     private $user;
 
@@ -21,7 +22,7 @@ class EditForm extends Model
     {
         return [
             [['email', 'password','name', 'last_name','address'], 'safe'],
-            [['phone'], 'integer'],
+            [['phone', 'type'], 'integer'],
 
         ];
     }
@@ -46,7 +47,7 @@ class EditForm extends Model
         $this->password =$user->password;
         $this->email =$user->email;
         $this->address = $user->address;
-
+        $this->type = $user->type;
 
         $this->user = $user;
 
@@ -61,8 +62,7 @@ class EditForm extends Model
         $user->password = md5($this->password);
         $user->phone = $this->phone;
         $user->address = $this->address;
-
-
+        $user->type = $this->type;
 
         if (!preg_match("/^(?:[a-z0-9]+(?:[-_.]?[a-z0-9]+)?@[a-z0-9_.-]+(?:\.?[a-z0-9]+)?\.[a-z]{2,5})$/i", $this->email)) {
             return false;

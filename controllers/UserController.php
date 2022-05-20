@@ -14,6 +14,7 @@ use app\models\ProductOrder;
 use app\models\User;
 use yii\helpers\Url;
 use yii\web\Controller;
+use Yii;
 
 
 
@@ -55,6 +56,7 @@ class UserController extends Controller
 
     public function actionUser($id)
     {
+
         $modelUser = User::findOne($id);
 
         return $this->render('user',[

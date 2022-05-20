@@ -1,12 +1,16 @@
 <?php
 /**
  * @var \app\models\User $model
- * @var \app\models\User $user
+ * @var \app\controllers\UserController $user
+ * @var \app\controllers\UserController $form
  */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
+use app\models\User;
+
+
 
 $this->title = 'O пользавателе';
 ?>
@@ -17,25 +21,82 @@ $this->title = 'O пользавателе';
 
             <?= Html::a('Назад', Yii::$app->getRequest()->getReferrer(), ['class' => 'btn btn-success'])?>
             <?= Html::a('Добавить заказ', Url::to(['order/add','id'=>$user->id]), ['class' => 'btn btn-success'])?>
-
             <?php
+
+            $form = \yii\bootstrap\ActiveForm::begin();
 
             echo DetailView::widget([
 
                 'model' => $user,
-                'attributes' => [
-                    'email',
-                    'name',
-                    'last_name',
-                    'phone',
-                    'address',
+                'attributes' =>
+                 [
+                    [
+                        'attribute' => 'email',
+                        'format'    => 'raw',
+                        'value'     => function ( $model) use($form) {
+                            return $form->field($model, 'email')->textInput()->label(false);
+                        }
+                    ],
+                    [
+                        'attribute'    =>  'name',
+                        'format' => 'raw',
+                        'value' => function ($model) use($form) {
+                            return $form->field($model, 'name')->textInput(['class' => ''])->label(false);
+                        }
+                    ],
+                    [
+                        'attribute'    =>  'last_name',
+                        'format' => 'raw',
+                        'value' => function ($model) use($form) {
+                            return $form->field($model, 'last_name')->textInput(['class' => ''])->label(false);
+                        }
+                    ],
+                    [
+                        'attribute'    =>  'phone',
+                        'format' => 'raw',
+                        'value' => function ($model) use($form) {
+                            return $form->field($model, 'phone')->textInput(['class' => ''])->label(false);
+                        }
+                    ],
+                    [
+                        'attribute'    =>  'address',
+                        'format' => 'raw',
+                        'value' => function ($model) use($form) {
+                            return $form->field($model, 'address')->textInput(['class' => ''])->label(false);
+                        }
+                    ],
+
+                    [
+                        'attribute'    =>  'type',
+                        'format' => 'raw',
+
+                        'value' => function ($model) use($form) {
+                            if (Yii::$app->user->isGuest ) {
+                                return $model->getTextType();
+                            }
+                                $user = User::findOne(['id'=> Yii::$app->user->getId()]);
+                                if ($user->type == User::TYPE_DIRECTOR && $model->type == User::TYPE_DIRECTOR){
+                                    return  $model->getTextType();
+                                }
+                                    if ($user->type == User::TYPE_ADM && $model->type == User::TYPE_ADM || $model->type == User::TYPE_DIRECTOR ){
+                                            return  $model->getTextType();
+                                    }
+                            return $form->field($model, 'type')->dropdownList(User::TYPE_LIST);
+                        }
+
+                    ]
                 ],
-            ]); ?>
+            ]);
+           echo Html::submitButton('Изменить', ['class' => 'btn btn-success']) ;
+            \yii\bootstrap\ActiveForm::end();
+
+
+            ?>
         </div>
     </div>
 </div>
 <div class="col-sm-12">
-    <table class="table table-striped table-bordered detail-view" >
+    <table class="table table-striped table-bordered detail-view " >
         <tbody>
         <tr>
             Заказы

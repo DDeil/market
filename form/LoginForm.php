@@ -3,9 +3,8 @@
 namespace app\form;
 
 use app\models\User;
-use phpDocumentor\Reflection\Types\True_;
 use yii\base\Model;
-use yii\web\IdentityInterface;
+
 
 class LoginForm extends Model
 {
@@ -30,8 +29,8 @@ class LoginForm extends Model
             $this->addError($attribute,'Пароль или Email введен не верно');
         }
         $this->user = $user;
-
     }
+
     public function attributeLabels(): array
     {
         return [
