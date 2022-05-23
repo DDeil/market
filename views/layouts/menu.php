@@ -44,7 +44,7 @@ echo Nav::widget([
         ],
         [
             'label' => 'Контакты',
-            'url' => ['/site/contact'],
+            'url' => ['/contact'],
         ],
     ],
 ]);
