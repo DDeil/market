@@ -5,7 +5,6 @@ namespace app\controllers;
 use app\models\Category;
 use app\models\News;
 use yii\base\Exception;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -50,5 +49,4 @@ class SiteController extends Controller
         die('sad');
         return $this->render('index');
     }
-
 }
