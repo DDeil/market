@@ -39,17 +39,24 @@ AppAsset::register($this);
             <div class="row">
                 <div class="col-sm-12">
                     <div class="pull-right">
-
                         <?php if (Yii::$app->user->isGuest){?>
                             <a href="<?=Url::to(['user/login'])?>" class="btn btn-sm btn-default">Войти</a> |
                             <a href="<?=Url::to(['user/registration'])?>" class="btn btn-sm btn-default">Регистрация</a>
-                            <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-sm btn-default">Корзина</a>
-                        <?php }else{ ?>
+                        <?php
+                        $session = Yii::$app->session;
+                        if($session->get('cart.qty') >= 0 ) {?>
+                        <i class="fa fa-comments-o"></i>
+                        <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-sm btn-default">Корзина
+                            <span class="label label-success"><?=$session['cart.qty']?></span>
+                        </a>
+                        <?php }?>
+
+                            <?php }else{ ?>
                             <?php $user = User::findOne(['id'=> Yii::$app->user->getId()]);
                                 if ($user->type == User::TYPE_DIRECTOR || $user->type == User::TYPE_ADM)
                                 {?>
                             <?= Html::a(
-                                'ADM',
+                                'Админка',
                                 Url::to(['adm/user/list']),
                                 [ 'class' => 'btn btn-default btn-flat']
                             ) ?>
@@ -64,9 +71,14 @@ AppAsset::register($this);
                                 Url::to(['/user/logout', 'id' => Yii::$app->getUser()->id]),
                                 [ 'class' => 'btn btn-default btn-flat']
                             ) ?>
-                            <?= Html::a(
-                                'Корзина',
-                                Url::to(['cart/order']), [ 'class' => 'btn btn-default btn-flat']) ?>
+                            <?php
+                            $session = Yii::$app->session;
+                            if($session->get('cart.qty') >= 0) {?>
+                                <i class="fa fa-comments-o"></i>
+                                <a href=" <?=Url::to(['cart/order'])?>" class="btn btn-default btn-flat">Корзина
+                                    <span class="label label-success"><?=$session['cart.qty']?></span>
+                                </a>
+                            <?php }?>
                          <?php }?>
                     </div>
                 </div>
