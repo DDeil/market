@@ -56,6 +56,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
 //                '<token>' => 'site/go',
+                'contact' => 'site/contact',
             ],
         ],
         'session'      => [

@@ -35,8 +35,6 @@ class UserController extends Controller
 
         if ($addForm->load(\Yii::$app->getRequest()->post()) && $addForm->validate()) {
             if ($addForm->process()){
-
-
                 return $this->redirect(Url::to(['list']));
             }
             \Yii::$app->getSession()->addFlash('error', 'Внутреняя ошибка');
@@ -57,16 +55,17 @@ class UserController extends Controller
         return $this->render('more',
             [
             'model' => $modelOrder,
-            'user' => $user,
+            'user'  => $user,
             ]);
     }
+
     public function actionAdmin($id)
     {
-       $user =  User::findOne(['id' => $id]);
+       $user       = User::findOne(['id' => $id]);
        $user->type = User::TYPE_ADM;
        if(!$user->save()){
            return false;
-       };
+       }
         return $this->redirect(Url::to(['more', 'id'=>$id]));
     }
 

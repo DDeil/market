@@ -2,9 +2,9 @@
 
 /**
  *
- * @var Category[]      $categories
- * @var Product[]       $products
- * @var ProductSearch   $searchForm
+ * @var Category[] $categories
+ * @var Product[] $products
+ * @var ProductSearch $searchForm
  *
  */
 
@@ -19,21 +19,23 @@ use yii\helpers\Url;
 $this->title = 'Главная';
 ?>
 <div class="row">
-    <div class="col-sm-3">
-        <div style="padding: 10px; background-color: #e8e7ee">
+    <div class="container">
+        <div class="col-sm-3">
+            <h3 style="background: url('image/sidebar_header_bg.png')no-repeat left bottom; padding-bottom: 10px">
+                Фильтр</h3>
             <?php $form = ActiveForm::begin(['action' => '/product', 'method' => 'get']) ?>
             <div class="row">
                 <div class="col-sm-12">
                     <?= $form->field($searchForm, 'category')->widget(
-                            Select2::class,
+                        Select2::class,
                         [
-                            'data'          => array_combine(array_column($categories,'name'), array_column($categories,'name')),
+                            'data' => array_combine(array_column($categories, 'name'), array_column($categories, 'name')),
                             'pluginOptions' => [
                                 'allowClear' => true,
                             ],
-                            'options'       => [
+                            'options' => [
                                 'placeholder' => 'Категории',
-                                'multiple'    => true,
+                                'multiple' => true,
                             ],
                         ]
                     ) ?>
@@ -64,20 +66,23 @@ $this->title = 'Главная';
             </div>
             <?php ActiveForm::end() ?>
         </div>
-    </div>
-
-    <div class="col-sm-9">
-        <div class="row">
-            <?php foreach ($products as $product) { ?>
-                <div class="col-sm-4 col-lg-4">
-                    <div style="text-align:center; margin-bottom: 10px; padding-bottom: 10px; width: 100%; height: 250px" class="btn-default" >
-                        <p><?= $product->title ?></p>
-                            <a href="<?=Url::to(['detail', 'id'=>$product->id])?>"><img src="image/product/<?=$product->image?>" height="50%"/></a>
+        <div class="col-sm-9">
+            <div class="row">
+                <?php foreach ($products as $product) { ?>
+                    <div class="col-sm-4 col-lg-4">
+                        <div style="text-align:center; margin-bottom: 10px; padding-bottom: 10px; width: 100%; height: 250px"
+                             class="btn-default">
+                            <p><?= $product->title ?></p>
+                            <a href="<?= Url::to(['detail', 'id' => $product->id]) ?>"><img
+                                        src="image/product/<?= $product->image ?>" height="50%"/></a>
                             <p class="bg-light-blue">$ <?= $product->price ?></p>
-                            <a href="<?=Url::to(['cart/add', 'id'=>$product->id])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart"><img src="image/cart.png" width="20%"/> В корзину</a>
+                            <a href="<?= Url::to(['cart/add', 'id' => $product->id]) ?>" data-id="<?= $product->id ?>"
+                               class="btn btn-sm btn-warning add-to-cart"><img src="image/cart.png" width="20%"/> В
+                                корзину</a>
+                        </div>
                     </div>
-                </div>
-            <?php } ?>
+                <?php } ?>
+            </div>
         </div>
     </div>
 </div>

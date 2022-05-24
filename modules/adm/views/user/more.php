@@ -1,97 +1,88 @@
 <?php
 /**
- * @var \app\models\User $model
- * @var \app\controllers\UserController $user
- * @var \app\controllers\UserController $form
+ * @var User $model
+ * @var UserController $user
+ * @var UserController $form
  */
 
+use app\controllers\UserController;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 use app\models\User;
 
-
-
-$this->title = 'O пользавателе';
+$this->title = 'O пользователе';
 ?>
 
 <div class="box-body">
     <div class="row">
         <div class="col-sm-6">
-
             <?= Html::a('Назад', Yii::$app->getRequest()->getReferrer(), ['class' => 'btn btn-success'])?>
             <?= Html::a('Добавить заказ', Url::to(['order/add','id'=>$user->id]), ['class' => 'btn btn-success'])?>
-            <?php
-
-            $form = \yii\bootstrap\ActiveForm::begin();
-
-            echo DetailView::widget([
-
+            <?php $form = ActiveForm::begin(); ?>
+            <?= DetailView::widget([
                 'model' => $user,
                 'attributes' =>
-                 [
                     [
-                        'attribute' => 'email',
-                        'format'    => 'raw',
-                        'value'     => function ( $model) use($form) {
-                            return $form->field($model, 'email')->textInput()->label(false);
-                        }
-                    ],
-                    [
-                        'attribute'    =>  'name',
-                        'format' => 'raw',
-                        'value' => function ($model) use($form) {
-                            return $form->field($model, 'name')->textInput(['class' => ''])->label(false);
-                        }
-                    ],
-                    [
-                        'attribute'    =>  'last_name',
-                        'format' => 'raw',
-                        'value' => function ($model) use($form) {
-                            return $form->field($model, 'last_name')->textInput(['class' => ''])->label(false);
-                        }
-                    ],
-                    [
-                        'attribute'    =>  'phone',
-                        'format' => 'raw',
-                        'value' => function ($model) use($form) {
-                            return $form->field($model, 'phone')->textInput(['class' => ''])->label(false);
-                        }
-                    ],
-                    [
-                        'attribute'    =>  'address',
-                        'format' => 'raw',
-                        'value' => function ($model) use($form) {
-                            return $form->field($model, 'address')->textInput(['class' => ''])->label(false);
-                        }
-                    ],
-
-                    [
-                        'attribute'    =>  'type',
-                        'format' => 'raw',
-
-                        'value' => function ($model) use($form) {
-                            if (Yii::$app->user->isGuest ) {
-                                return $model->getTextType();
+                        [
+                            'attribute' => 'email',
+                            'format' => 'raw',
+                            'value' => function ($model) use ($form) {
+                                return $form->field($model, 'email')->textInput()->label(false);
                             }
-                                $user = User::findOne(['id'=> Yii::$app->user->getId()]);
-                                if ($user->type == User::TYPE_DIRECTOR && $model->type == User::TYPE_DIRECTOR){
-                                    return  $model->getTextType();
+                        ],
+                        [
+                            'attribute' => 'name',
+                            'format' => 'raw',
+                            'value' => function ($model) use ($form) {
+                                return $form->field($model, 'name')->textInput(['class' => ''])->label(false);
+                            }
+                        ],
+                        [
+                            'attribute' => 'last_name',
+                            'format' => 'raw',
+                            'value' => function ($model) use ($form) {
+                                return $form->field($model, 'last_name')->textInput(['class' => ''])->label(false);
+                            }
+                        ],
+                        [
+                            'attribute' => 'phone',
+                            'format' => 'raw',
+                            'value' => function ($model) use ($form) {
+                                return $form->field($model, 'phone')->textInput(['class' => ''])->label(false);
+                            }
+                        ],
+                        [
+                            'attribute' => 'address',
+                            'format' => 'raw',
+                            'value' => function ($model) use ($form) {
+                                return $form->field($model, 'address')->textInput(['class' => ''])->label(false);
+                            }
+                        ],
+                        [
+                            'attribute' => 'type',
+                            'format' => 'raw',
+
+                            'value' => function ($model) use ($form) {
+                                if (Yii::$app->user->isGuest) {
+                                    return $model->getTextType();
                                 }
-                                    if ($user->type == User::TYPE_ADM && $model->type == User::TYPE_ADM || $model->type == User::TYPE_DIRECTOR ){
-                                            return  $model->getTextType();
-                                    }
-                            return $form->field($model, 'type')->dropdownList(User::TYPE_LIST);
-                        }
+                                $user = User::findOne(['id' => Yii::$app->user->getId()]);
+                                if ($user->type == User::TYPE_DIRECTOR && $model->type == User::TYPE_DIRECTOR) {
+                                    return $model->getTextType();
+                                }
+                                if ($user->type == User::TYPE_ADM && $model->type == User::TYPE_ADM || $model->type == User::TYPE_DIRECTOR) {
+                                    return $model->getTextType();
+                                }
+                                return $form->field($model, 'type')->dropdownList(User::TYPE_LIST);
+                            }
 
-                    ]
-                ],
-            ]);
-           echo Html::submitButton('Изменить', ['class' => 'btn btn-success']) ;
-            \yii\bootstrap\ActiveForm::end();
-
-
-            ?>
+                        ]
+                    ],
+            ]);?>
+            <?= Html::submitButton('Изменить', ['class' => 'btn btn-success']); ?>
+            <?php ActiveForm::end(); ?>
         </div>
     </div>
 </div>
@@ -107,10 +98,7 @@ $this->title = 'O пользавателе';
             <th>Статус</th>
             <th>Поддробнее о заказе</th>
         </tr>
-        <?php
-        foreach ($model as $order) {
-
-            ?>
+        <?php foreach ($model as $order) { ?>
             <tr>
                 <td><?=$order->id?></td>
                 <td><?=$order->date?></td>
@@ -129,7 +117,6 @@ $this->title = 'O пользавателе';
                 <?php if ($order->status == 5){?>
                     <td style="background-color: white"><?=$order->getTextStatus()?></td>
                <?php } ?>
-
                 <td>
                     <?= Html::a('Подробно', Url::to(['order/more','id'=>$order->id]), ['class' => 'btn btn-success'])?>
                 </td>
