@@ -6,6 +6,7 @@ use DateTime;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
+
 /**
  * @property integer            $id
  * @property string             $title
@@ -60,7 +61,7 @@ class Product extends ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description','$categorys'], 'string'],
+            [['title', 'description','categorys'], 'string'],
             [['price','type', 'status'], 'integer'],
             [['is_hit', 'is_new'], 'boolean'],
         ];
@@ -104,6 +105,10 @@ class Product extends ActiveRecord
     public function getTextStatus(): string
     {
         return self::STATUS_LIST[$this->status] ?? 'Статус не известен';
+    }
+    public function getPromo(): string
+    {
+        return $this->hasOne(Promotion::class,['product_id'=>$this->id]);
     }
 
 

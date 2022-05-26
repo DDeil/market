@@ -58,36 +58,10 @@ use yii\helpers\Url;
                         'visible' => true,
                     ],
                     [
+                        'label' => 'Акции',
+                        'icon' => 'line-chart',
+                        'url' => ['/adm/promotion/list'],
                         'visible' => true,
-                        'label'   => 'Настройка бота',
-                        'icon' => 'group',
-                        'url'     => '#',
-                        'items'   => [
-                            [
-                                'visible' => true,
-                                'label'   => 'Подключение бота',
-                                'icon' => 'android',
-                                'url' => ['/adm/bot-setting/connect'],
-                            ],
-                            [
-                                'visible' => true,
-                                'label'   => 'Вебмастера',
-                                'icon' => 'android',
-                                'url' => ['/adm/bot-setting/user'],
-                            ],
-                            [
-                                'visible' => true,
-                                'label'   => 'Показатели общие',
-                                'icon' => 'android',
-                                'url' => ['/adm/bot-setting/indicator'],
-                            ],
-                            [
-                                'visible' => true,
-                                'label'   => 'Показатели индивид.',
-                                'icon' => 'android',
-                                'url' => ['/adm/bot-setting/indicator-user'],
-                            ],
-                        ],
                     ],
                 ],
             ]

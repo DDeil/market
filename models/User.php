@@ -77,10 +77,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Order::class,['user_id'=>'id']);
     }
 
-    public function  getUser()
-    {
-        return $this->hasOne(User::class,['id'=>'id']);
-    }
+
 
     public function  getProductOrders()
     {
