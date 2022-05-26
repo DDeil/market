@@ -79,7 +79,7 @@ $this->title = 'Главная';
                             <?php $promo = Promotion::findOne(["product_id" => $product->id]);
                             $time = strtotime(date('Y-m-d'));
                                 if ($promo && strtotime($promo->date_from) <= $time && strtotime($promo->date_to) >= $time){?>
-                                    <p>Акзионный товар - <?=$promo->rate?>%</p>
+                                    <p>Акционный товар: - <?=$promo->rate?>%</p>
                                 <?php }?>
                             <a href="<?=Url::to(['cart/add', 'id'=>$product->id])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart" ><img src="image/cart.png" width="20%"/> В корзину</a>
                     </div>

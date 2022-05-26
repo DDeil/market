@@ -36,7 +36,7 @@ $this->title = 'Главная';
                         <?php $promo = Promotion::findOne(["product_id" => $product->id]);
                         $time = strtotime(date('Y-m-d'));
                         if ($promo && strtotime($promo->date_from) <= $time && strtotime($promo->date_to) >= $time){?>
-                            <p>Акзионный товар - <?=$promo->rate?>%</p>
+                            <p>Акционный товар: - <?=$promo->rate?>%</p>
                         <?php }?>
                         <p class="bg-light-blue"><h5>Код продукта :  <?= $product->id ?></p></h5>
 
