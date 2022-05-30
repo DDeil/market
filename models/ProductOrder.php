@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer    $product_id
  * @property integer    $order_id
  * @property integer    $count_product
+ * @property integer    $promo_price
  *
  * @property Product    $product
  * @property Order      $order
@@ -31,7 +32,14 @@ class ProductOrder extends ActiveRecord
     {
         return 'product_order';
     }
+    public function rules(): array
+    {
+        return [
+            [['product_id','order_id','count_product','promo_price'],'safe'],
 
+        ];
+
+    }
     /**
      * @return ActiveQuery
      */

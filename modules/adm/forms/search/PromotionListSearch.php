@@ -18,8 +18,8 @@ class PromotionListSearch extends Promotion
         }
 
         $query->andFilterWhere([ 'p.rate' => $this->rate]);
-        $query->andFilterWhere([ 'p.date_from' => $this->date_from]);
-        $query->andFilterWhere([ 'p.date_to' => $this->date_to]);
+        $query->andFilterWhere([ 'p.date_from' => $this->date_begin]);
+        $query->andFilterWhere([ 'p.date_to' => $this->date_end]);
 
         return new ActiveDataProvider([
             'query' => $query,

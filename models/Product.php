@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
  * @property Category           $category
  * @property ProductCategory    $productCategory
  * @property ProductOrder       $countProduct
+ * @property Promotion[]        $promo
  */
 
 class Product extends ActiveRecord
@@ -106,13 +107,12 @@ class Product extends ActiveRecord
     {
         return self::STATUS_LIST[$this->status] ?? 'Статус не известен';
     }
-    public function getPromo(): string
+
+    public function getPromo(): ActiveQuery
     {
-        return $this->hasOne(Promotion::class,['product_id'=>$this->id]);
+        $currentDate = (new DateTime())->format('Y-m-d');
+
+        return $this->hasMany(Promotion::class, ['product_id' => 'id'])->onCondition(['<=', 'date_begin', $currentDate])->andOnCondition(['>=', 'date_end', $currentDate]);
     }
-
-
-
-
 
 }

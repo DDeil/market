@@ -59,7 +59,7 @@ use yii\helpers\Url;
                     ],
                     [
                         'label' => 'Акции',
-                        'icon' => 'line-chart',
+                        'icon' => 'percent',
                         'url' => ['/adm/promotion/list'],
                         'visible' => true,
                     ],

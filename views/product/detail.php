@@ -33,10 +33,8 @@ $this->title = 'Главная';
                 </div>
                     <div style="border-color: #0a568c">
                         <p class="bg-light-blue"><h4>Цена: $  <?= $product->price ?></p></h4>
-                        <?php $promo = Promotion::findOne(["product_id" => $product->id]);
-                        $time = strtotime(date('Y-m-d'));
-                        if ($promo && strtotime($promo->date_from) <= $time && strtotime($promo->date_to) >= $time){?>
-                            <p>Акционный товар: - <?=$promo->rate?>%</p>
+                        <?php foreach ($product->promo as $promo){?>
+                            <p>Акционный продукт: - <?=$promo->rate?> %</p>
                         <?php }?>
                         <p class="bg-light-blue"><h5>Код продукта :  <?= $product->id ?></p></h5>
 

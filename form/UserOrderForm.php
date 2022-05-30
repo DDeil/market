@@ -4,6 +4,7 @@ namespace app\form;
 
 use app\models\Order;
 use app\models\ProductOrder;
+use app\models\Promotion;
 use app\models\User;
 use yii\base\Model;
 use Yii;
@@ -77,10 +78,14 @@ class UserOrderForm extends Model
             $productOrder->product_id = $id;
             $productOrder->order_id = $order_id;
             $productOrder->count_product = $item['qty'];
+
+            $productOrder->promo_price = $item['price'];
+
+
             if ($productOrder->save()) {
-                Yii::$app->session->setFlash('success', 'Ваш заказа принят, мэнэджер мвяжиться с вами');
+                Yii::$app->session->setFlash('success', 'Ваш заказа принят, менеджер свяжиться с вами');
             } else {
-                Yii::$app->session->setFlash('error', 'Ошибка, мэнэджер мвяжиться с вами');
+                Yii::$app->session->setFlash('error', 'Ошибка, менеджер свяжиться с вами');
             }
         }
     }

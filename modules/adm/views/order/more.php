@@ -10,6 +10,7 @@ use app\models\Order;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
+use app\models\Promotion;
 
 
 
@@ -63,14 +64,18 @@ $this->title = 'O заказов';
                                     if ($productOrder->product_id == $product->id){
                                 ?>
                             <tr>
+
                                 <td><?=$product->id?></td>
                                 <td><?=$product->title?></td>
                                 <td><?=$product->description?></td>
                                 <td><?=$productOrder->count_product?></td>
-                                <td><?=$product->price?></td>
+                                <td><?=$productOrder->promo_price?></td>
                                 <td><?=\yii\helpers\Html::img('/image/product/' . $product->image, ['style' => 'width: 55px']);?></td>
-                                <td><?=$product->price*$productOrder->count_product?></td>                            </tr>
-                        <?php }}} ?>
+                                <td><?=$productOrder->promo_price*$productOrder->count_product?></td>
+                                <?php }?>
+
+                            </tr>
+                        <?php }} ?>
                         </tbody>
                     </table>
                 </div>

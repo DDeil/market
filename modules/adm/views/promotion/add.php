@@ -34,8 +34,8 @@ $this->title = 'Добавть акционый товар';
 
                     ])?>
                     <?= $form->field($addForm, 'rate')->input('number',['min'=>0 , 'max'=>100])?>
-                    <?= $form->field($addForm, 'date_from')->input('date')?>
-                    <?= $form->field($addForm, 'date_to')->input('date')?>
+                    <?= $form->field($addForm, 'date_begin')->input('date')?>
+                    <?= $form->field($addForm, 'date_end')->input('date')?>
                 </div>
                 <div class="box-body">
                     <div class=" pull-right">

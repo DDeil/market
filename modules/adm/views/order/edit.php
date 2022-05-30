@@ -11,6 +11,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
+use app\models\Promotion;
 
 
 $this->title = 'Редактировать заказ';
@@ -66,10 +67,9 @@ $this->title = 'Редактировать заказ';
                                         <input type="submit" name="button" value="Изменить">
                                     </form>
                                 </td>
-                                <td><?=$product->price?></td>
-                                <td><?= Html::img('/image/product/' . $product->image, ['style' => 'width: 55px']);?></td>
-                                <td><?=$product->price*$productOrder->count_product?></td>
-                                <td><?= Html::a('<i class="fa fa-trash"></i>', Url::to(['delete','id'=>$product->id,'order_id'=>$model->id]))?></td>
+                                <td><?=$productOrder->promo_price?></td>
+                                <td><?=\yii\helpers\Html::img('/image/product/' . $product->image, ['style' => 'width: 55px']);?></td>
+                                <td><?=$productOrder->promo_price*$productOrder->count_product?></td>
                             </tr>
                         <?php } ?>
                         </tbody>

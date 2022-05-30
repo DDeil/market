@@ -65,7 +65,6 @@ class OrderController extends Controller
             $addForm->address = $user->address;
             $addForm->phone = $user->phone;
 
-
         }
 
         if ($addForm->load(\Yii::$app->getRequest()->post()) && $addForm->validate()) {

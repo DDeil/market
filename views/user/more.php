@@ -34,9 +34,9 @@ $this->title = 'O заказов';
                         <td><?=$product->title?></td>
                         <td><?=$product->description?></td>
                         <td><?=$productOrder->count_product?></td>
-                        <td><?=$product->price?></td>
+                        <td><?=$productOrder->promo_price?></td>
                         <td><?=\yii\helpers\Html::img('/image/product/' . $product->image, ['style' => 'width: 55px']);?></td>
-                        <td><?=$product->price*$productOrder->count_product?></td>                            </tr>
+                        <td><?=$productOrder->promo_price*$productOrder->count_product?></td>                            </tr>
                 <?php }}} ?>
         <div class="box-header">
             <div class="row">

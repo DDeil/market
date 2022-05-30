@@ -76,11 +76,11 @@ $this->title = 'Главная';
                         <p><?= $product->title ?></p>
                             <a href="<?=Url::to(['detail', 'id'=>$product->id])?>"><img src="image/product/<?=$product->image?>" height="50%"/></a>
                             <p class="bg-light-blue">$ <?= $product->price ?></p>
-                            <?php $promo = Promotion::findOne(["product_id" => $product->id]);
-                            $time = strtotime(date('Y-m-d'));
-                                if ($promo && strtotime($promo->date_from) <= $time && strtotime($promo->date_to) >= $time){?>
-                                    <p>Акционный товар: - <?=$promo->rate?>%</p>
-                                <?php }?>
+                              <?php foreach ($product->promo as $promo){?>
+                                <p>Акционный продукт: - <?=$promo->rate?> %</p>
+                        <?php }?>
+
+
                             <a href="<?=Url::to(['cart/add', 'id'=>$product->id])?>" data-id="<?=$product->id?>" class="btn btn-sm btn-warning add-to-cart" ><img src="image/cart.png" width="20%"/> В корзину</a>
                     </div>
                 </div>

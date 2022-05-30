@@ -40,8 +40,8 @@ $this->title = 'Акционные товары';
                                 'attribute'=> 'product_id',
                         ],
                         'rate',
-                        'date_from',
-                        'date_to',
+                        'date_begin',
+                        'date_end',
                     ],
                 ])?>
             </div>

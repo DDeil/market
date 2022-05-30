@@ -9,8 +9,8 @@ use app\models\Product;
  * @property integer     $id
  * @property integer     $product_id
  * @property integer     $rate
- * @property integer     $date_from
- * @property integer     $date_to
+ * @property integer     $date_begin
+ * @property integer     $date_end
  * @property Product []    $title
 
  */
@@ -27,7 +27,7 @@ class Promotion extends ActiveRecord
     {
         return [
           [['id','product_id','rate'],'safe'],
-          [['date_from','date_to'],'string'],
+          [['date_begin','date_end'],'string'],
         ];
 
     }
@@ -38,8 +38,8 @@ class Promotion extends ActiveRecord
             'id' => 'Код',
             'product_id' => 'Выберите продукт',
             'rate' =>'Процент скидки',
-            'date_from' => 'Дата начала акции',
-            'date_to' => 'Дата конца акции',
+            'date_begin' => 'Дата начала акции',
+            'date_end' => 'Дата конца акции',
         ];
     }
 
